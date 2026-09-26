@@ -1,167 +1,334 @@
-import sqlite3
-from dbfread import DBF
+KARNATAKA_TALUKS = {
 
-DATABASE = r"C:\RealEstateProject\database\realestate.db"
-DBF_FILE = r"C:\RealEstateProject\data\karnataka_villages.zip\vb_soi_ka.dbf"
+    "Bagalkote": [
+        "Bagalkote",
+        "Terdal",
+        "Mudhol",
+        "Badami",
+        "Bilagi",
+        "Hunagunda",
+        "Ilkal",
+        "Rabkavi Banhatti",
+        "Jamkhandi"
+    ],
 
+    "Ballari": [
+        "Ballari",
+        "Kurugodu",
+        "Kampli",
+        "Sanduru",
+        "Siraguppa"
+    ],
 
-def normalize(value):
-    if value is None:
-        return ""
+    "Belagavi": [
+        "Belagavi",
+        "Athani",
+        "Bailhongal",
+        "Chikkodi",
+        "Gokak",
+        "Khanapura",
+        "Mudalgi",
+        "Nippani",
+        "Rayabaga",
+        "Savadatti",
+        "Ramadurga",
+        "Kagawada",
+        "Hukkeri",
+        "Kitturu",
+        "Yargatti"
+    ],
 
-    return (
-        str(value)
-        .strip()
-        .lower()
-        .replace(" ", "")
-        .replace("-", "")
-        .replace(".", "")
-        .replace("'", "")
-    )
+    "Bengaluru Urban": [
+        "Bengaluru",
+        "Kengeri",
+        "Krishnarajapura",
+        "Anekal",
+        "Yelahanka"
+    ],
 
+    "Bengaluru Rural": [
+        "Nelamangala",
+        "Doddaballapura",
+        "Devanahalli",
+        "Hosakote"
+    ],
 
-# ==========================================
-# CONNECT TO DATABASE
-# ==========================================
+    "Bidar": [
+        "Aurad",
+        "Basavakalyana",
+        "Bhalki",
+        "Bidar",
+        "Chitgoppa",
+        "Hulsuru",
+        "Humnabad",
+        "Kamalanagara"
+    ],
 
-connection = sqlite3.connect(DATABASE)
-cursor = connection.cursor()
+    "Chamarajanagara": [
+        "Chamarajanagara",
+        "Gundlupete",
+        "Kollegala",
+        "Yelanduru",
+        "Hanuru"
+    ],
 
+    "Chikkaballapura": [
+        "Chikkaballapura",
+        "Bagepalli",
+        "Chintamani",
+        "Gauribidanuru",
+        "Gudibanda",
+        "Sidlaghatta",
+        "Cheluru",
+        "Manchenahalli"
+    ],
 
-# ==========================================
-# GET ALL DATABASE TALUKS
-# ==========================================
+    "Chikkmagaluru": [
+        "Chikkamagaluru",
+        "Kaduru",
+        "Koppa",
+        "Mudigere",
+        "Narasimharajapura",
+        "Sringeri",
+        "Tarikere",
+        "Ajjampura",
+        "Kalasa"
+    ],
 
-cursor.execute("""
-SELECT
-    taluks.name,
-    districts.name
-FROM taluks
-JOIN districts
-ON taluks.district_id = districts.id
-ORDER BY districts.name, taluks.name
-""")
+    "Chitradurga": [
+        "Chitradurga",
+        "Challakere",
+        "Hiriyur",
+        "Holalkere",
+        "Hosadurga",
+        "Molakalmuru"
+    ],
 
-database_taluks = cursor.fetchall()
+    "Dakshina Kannada": [
+        "Mangaluru",
+        "Ullal",
+        "Mulki",
+        "Moodbidri",
+        "Bantwala",
+        "Belathangadi",
+        "Putturu",
+        "Sulya",
+        "Kadaba"
+    ],
 
-connection.close()
+    "Davanagere": [
+        "Davanagere",
+        "Harihara",
+        "Channagiri",
+        "Honnali",
+        "Nyamathi",
+        "Jagaluru"
+    ],
 
+    "Dharwad": [
+        "Kalghatgi",
+        "Dharwad",
+        "Hubballi (Rural)",
+        "Hubballi (Urban)",
+        "Kundagolu",
+        "Navalgunda",
+        "Alnavara",
+        "Annigeri"
+    ],
 
-print()
-print("======================================")
-print("TALUK MATCHING CHECK")
-print("======================================")
-print()
+    "Gadag": [
+        "Gadag",
+        "Naragunda",
+        "Mundaragi",
+        "Rona",
+        "Gajendragada",
+        "Lakshmeshwara",
+        "Shirahatti"
+    ],
 
-print("Taluks in our database:", len(database_taluks))
-print("Reading Karnataka village dataset...")
-print()
+    "Hassan": [
+        "Hassan",
+        "Arasikere",
+        "Channarayapattana",
+        "Holenarsipura",
+        "Sakleshpura",
+        "Aluru",
+        "Arakalagudu",
+        "Beluru"
+    ],
 
+    "Haveri": [
+        "Ranibennur",
+        "Byadgi",
+        "Hangala",
+        "Haveri",
+        "Savanuru",
+        "Hirekeruru",
+        "Shiggavi",
+        "Rattihalli"
+    ],
 
-# ==========================================
-# READ VILLAGE DATASET
-# ==========================================
+    "Kalaburagi": [
+        "Kalaburagi",
+        "Afzalpura",
+        "Alanda",
+        "Chincholi",
+        "Chitapura",
+        "Jevargi",
+        "Sedam",
+        "Kamalapura",
+        "Shahabad",
+        "Kalgi",
+        "Yedrami"
+    ],
 
-table = DBF(
-    DBF_FILE,
-    load=False,
-    encoding="latin1"
-)
+    "Kodagu": [
+        "Madikeri",
+        "Somawarapete",
+        "Virajapete",
+        "Ponnammapete",
+        "Kushalnagara"
+    ],
 
+    "Kolar": [
+        "Kolar",
+        "Bangarapete",
+        "Maluru",
+        "Mulabagilu",
+        "Srinivasapura",
+        "Kolar Gold Fields"
+    ],
 
-# ==========================================
-# GET UNIQUE DISTRICT + TALUK COMBINATIONS
-# ==========================================
+    "Koppala": [
+        "Koppala",
+        "Gangavathi",
+        "Kushtagi",
+        "Yelaburga",
+        "Kanakagiri",
+        "Karatagi",
+        "Kukanuru"
+    ],
 
-combinations = set()
+    "Mandya": [
+        "Mandya",
+        "Madduru",
+        "Malavalli",
+        "Srirangapattana",
+        "Krishnarajapete",
+        "Nagamangala",
+        "Pandavapura"
+    ],
 
-for record in table:
+    "Mysuru": [
+        "Mysuru",
+        "Hunasuru",
+        "Krishnarajanagara",
+        "Nanjanagodu",
+        "Heggadadevanakote",
+        "Piriyapattana",
+        "Tirumakudalu Narasipura",
+        "Saraguru",
+        "Saligrama"
+    ],
 
-    district = record.get("district")
-    taluk = record.get("subdistric")
+    "Raichuru": [
+        "Raichuru",
+        "Sindhanuru",
+        "Manvi",
+        "Devadurga",
+        "Lingasaguru",
+        "Mudgal",
+        "Maski",
+        "Sirawara"
+    ],
 
-    if district and taluk:
+    "Ramanagara": [
+        "Ramanagara",
+        "Magadi",
+        "Kanakapura",
+        "Channapattana",
+        "Harohalli"
+    ],
 
-        combinations.add(
-            (
-                str(district).strip(),
-                str(taluk).strip()
-            )
-        )
+    "Shivamogga": [
+        "Shivamogga",
+        "Sagara",
+        "Bhadravathi",
+        "Hosanagara",
+        "Shikaripura",
+        "Soraba",
+        "Tirthahalli"
+    ],
 
+    "Tumakuru": [
+        "Tumakuru",
+        "Chikkanayakanahalli",
+        "Kunigal",
+        "Madhugiri",
+        "Sira",
+        "Tipturu",
+        "Gubbi",
+        "Koratagere",
+        "Pavagada",
+        "Turuvekere"
+    ],
 
-print("Unique dataset combinations:", len(combinations))
-print()
+    "Udupi": [
+        "Udupi",
+        "Kapu",
+        "Bynduru",
+        "Karkala",
+        "Kundapura",
+        "Hebri",
+        "Brahmavara"
+    ],
 
+    "Uttara Kannada": [
+        "Karwara",
+        "Sirsi",
+        "Joida",
+        "Dandeli",
+        "Bhatkal",
+        "Kumta",
+        "Ankola",
+        "Haliyal",
+        "Honnavara",
+        "Mundagodu",
+        "Siddapura",
+        "Yellapura"
+    ],
 
-# ==========================================
-# CHECK MATCHES
-# ==========================================
+    "Vijayapura": [
+        "Vijayapura",
+        "Indi",
+        "Basavana Bagewadi",
+        "Sindgi",
+        "Muddebihala",
+        "Talikote",
+        "Devara Hipparagi",
+        "Chadchana",
+        "Tikote",
+        "Babaleshwara",
+        "Kolhara",
+        "Nidagundi",
+        "Alamela"
+    ],
 
-matched = 0
-unmatched = []
+    "Yadagiri": [
+        "Yadagiri",
+        "Shahapura",
+        "Surapura",
+        "Gurmitkala",
+        "Vadagera",
+        "Hunsagi"
+    ],
 
-
-for dataset_district, dataset_taluk in sorted(combinations):
-
-    found = False
-
-    for database_taluk, database_district in database_taluks:
-
-        if (
-            normalize(dataset_district)
-            == normalize(database_district)
-            and
-            normalize(dataset_taluk)
-            == normalize(database_taluk)
-        ):
-
-            found = True
-            break
-
-    if found:
-
-        matched += 1
-
-    else:
-
-        unmatched.append(
-            f"{dataset_district} → {dataset_taluk}"
-        )
-
-
-# ==========================================
-# RESULT
-# ==========================================
-
-print("======================================")
-print("MATCHING RESULT")
-print("======================================")
-print()
-
-print("Matched combinations:", matched)
-print("Unmatched combinations:", len(unmatched))
-print()
-
-
-# ==========================================
-# SHOW UNMATCHED
-# ==========================================
-
-if unmatched:
-
-    print("UNMATCHED COMBINATIONS")
-    print("----------------------")
-
-    for item in unmatched:
-        print(item)
-
-else:
-
-    print("ALL TALUK COMBINATIONS MATCHED!")
-
-
-print()
-print("======================================")
-print("CHECK COMPLETED")
-print("======================================")
+    "Vijayanagara": [
+        "Hosapete",
+        "Hagaribommanahalli",
+        "Harapanahalli",
+        "Hoovina Hadagali",
+        "Kudligi",
+        "Kotturu"
+    ]
+}
