@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Flask / logs
+instance/
+*.log
+
+# SQLite temporary/backup files
+*.db-wal
+*.db-shm
+*.bak
+database/realestate_backup.db
+
+# Local GIS/import files
+*.zip
+data/karnataka_villages.zip/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+database/*.db

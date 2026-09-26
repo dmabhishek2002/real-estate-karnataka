@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Admin Control Center · Real Estate Karnataka</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#070c09;color:#f4f7f4;font-family:"DM Sans",sans-serif}button,input,select{font:inherit}.wrap{width:min(1380px,calc(100% - 32px));margin:0 auto}.top{position:sticky;top:0;z-index:30;background:rgba(7,12,9,.88);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.08)}.topin{display:flex;align-items:center;justify-content:space-between;padding:15px 0}.brand{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700}.nav{display:flex;gap:9px}.nav a{border:1px solid rgba(255,255,255,.12);background:transparent;color:#fff;border-radius:999px;padding:9px 13px;font-size:9px;text-transform:uppercase;letter-spacing:.12em;text-decoration:none}.hero{padding:55px 0 25px}.eyebrow{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#6fc8a2}.hero h1{font:700 clamp(46px,6vw,82px)/.92 "Playfair Display",serif;margin:12px 0}.hero p{max-width:720px;color:#8e9a93;line-height:1.7;font-size:12px}.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:12px 0 18px}.stat{background:#0c1410;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:18px}.stat small{display:block;color:#7b8981;font-size:8px;text-transform:uppercase;letter-spacing:.14em}.stat strong{display:block;font-size:25px;margin-top:8px}.layout{display:grid;grid-template-columns:340px 1fr;gap:18px}.panel{background:#0c1410;border:1px solid rgba(255,255,255,.09);border-radius:18px;padding:20px}.panel h2{font:600 29px/.98 "Playfair Display",serif;margin:5px 0 18px}.field{margin-bottom:12px}.field label{display:block;color:#85938b;font-size:8px;text-transform:uppercase;letter-spacing:.13em;margin-bottom:6px}.field input,.field select{width:100%;padding:11px 12px;border:1px solid rgba(255,255,255,.10);background:#101a14;color:#fff;border-radius:10px;outline:none}.field input:focus,.field select:focus{border-color:rgba(111,200,162,.45)}.btn{padding:11px 14px;border:0;border-radius:999px;background:#f5efe2;color:#07100b;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}.btn.secondary{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.12)}.btn.danger{background:#2a1212;color:#ffb5b2;border:1px solid rgba(255,120,120,.18)}.actions{display:flex;gap:8px;flex-wrap:wrap}.msg{min-height:18px;margin-top:10px;font-size:10px}.filters{display:grid;grid-template-columns:1.5fr repeat(4,1fr) auto;gap:8px;align-items:end}.filters .field{margin:0}.table-wrap{overflow:auto;margin-top:15px}.table{width:100%;border-collapse:collapse;min-width:1050px}.table th{text-align:left;color:#92a09a;font-size:8px;text-transform:uppercase;letter-spacing:.12em;padding:10px;border-bottom:1px solid rgba(255,255,255,.10);white-space:nowrap}.table td{padding:12px 10px;border-bottom:1px solid rgba(255,255,255,.07);font-size:10px;vertical-align:top}.title-cell{max-width:260px}.title-main{font-weight:700;color:#f6f8f6}.title-sub{display:block;margin-top:4px;color:#728078;font-size:9px;line-height:1.4}.tag{padding:5px 8px;border-radius:999px;background:rgba(111,200,162,.10);color:#9be2c4;font-size:8px}.row-actions{display:flex;gap:6px;flex-wrap:wrap}.small-btn{border:1px solid rgba(255,255,255,.12);background:transparent;color:#fff;border-radius:999px;padding:7px 10px;font-size:8px;text-transform:uppercase;letter-spacing:.1em}.small-btn.edit:hover{border-color:#6fc8a2;color:#8fe0bb}.small-btn.delete:hover{border-color:#ff8c86;color:#ffaaa7}.pager{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:15px}.pageinfo{color:#7d8983;font-size:9px}.modal{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.76);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:18px}.modal.show{display:flex}.modal-card{width:min(760px,100%);max-height:90vh;overflow:auto;background:#0b120e;border:1px solid rgba(255,255,255,.11);border-radius:22px;padding:24px;box-shadow:0 30px 100px rgba(0,0,0,.5)}.modal-head{display:flex;justify-content:space-between;gap:12px;align-items:start}.close{width:34px;height:34px;border-radius:50%;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.14);font-size:20px}.edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.edit-grid .wide{grid-column:1/-1}.note{color:#738178;font-size:10px;line-height:1.6;margin-top:10px}
+@media(max-width:1100px){.stats{grid-template-columns:repeat(3,1fr)}.layout{grid-template-columns:1fr}.filters{grid-template-columns:1fr 1fr 1fr}.filters .wide-filter{grid-column:1/-1}}@media(max-width:680px){.stats{grid-template-columns:1fr 1fr}.filters{grid-template-columns:1fr}.edit-grid{grid-template-columns:1fr}.edit-grid .wide{grid-column:auto}.topin{align-items:flex-start;gap:10px}.nav{flex-wrap:wrap;justify-content:flex-end}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap topin"><div class="brand">Real Estate Karnataka · Admin</div><nav class="nav"><a href="/">Public site</a><a href="/admin/logout">Logout</a></nav></div></header>
+<main class="wrap">
+<section class="hero"><div class="eyebrow">Control center</div><h1>Manage the<br>property database.</h1><p>Add, search, edit and remove listings from one dashboard. User-facing property search remains protected by login.</p></section>
+<section class="stats">
+<div class="stat"><small>Total properties</small><strong id="statTotal">—</strong></div>
+<div class="stat"><small>Houses</small><strong id="statHouse">—</strong></div>
+<div class="stat"><small>Apartments</small><strong id="statApartment">—</strong></div>
+<div class="stat"><small>Villas</small><strong id="statVilla">—</strong></div>
+<div class="stat"><small>Plots</small><strong id="statPlot">—</strong></div>
+</section>
+<div class="layout">
+<section class="panel">
+<div class="eyebrow">Property inventory</div><h2>Add property</h2>
+<form id="addForm">
+<div class="field"><label>District</label><select id="district" required><option value="">Select District</option></select></div>
+<div class="field"><label>Taluk</label><select id="taluk" required><option value="">Select Taluk</option></select></div>
+<div class="field"><label>Village</label><select id="village"><option value="">Select Village</option></select></div>
+<div class="field"><label>Title</label><input id="title" required></div>
+<div class="field"><label>Property type</label><select id="type" required><option>House</option><option>Apartment</option><option>Villa</option><option>Plot</option><option>Site</option><option>Land</option></select></div>
+<div class="field"><label>BHK</label><input id="bhk"></div>
+<div class="field"><label>Area sqft</label><input id="area" type="number" min="1" required></div>
+<div class="field"><label>Price</label><input id="price" type="number" min="1" required></div>
+<div class="field"><label>Source</label><input id="source" placeholder="Admin / Owner / Agency"></div>
+<div class="field"><label>Owner name</label><input id="ownerName"></div>
+<div class="field"><label>Owner contact</label><input id="ownerContact"></div>
+<button class="btn">Save property</button><div class="msg" id="addMsg"></div>
+</form>
+</section>
+<section class="panel">
+<div class="eyebrow">Inventory overview</div><h2>Properties</h2>
+<div class="filters">
+<div class="field wide-filter"><label>Search</label><input id="q" placeholder="Title, owner or contact"></div>
+<div class="field"><label>District</label><select id="filterDistrict"><option value="">All districts</option></select></div>
+<div class="field"><label>Taluk</label><select id="filterTaluk"><option value="">All taluks</option></select></div>
+<div class="field"><label>Village</label><select id="filterVillage"><option value="">All villages</option></select></div>
+<div class="field"><label>Type</label><select id="filterType"><option value="">All types</option><option>House</option><option>Apartment</option><option>Villa</option><option>Plot</option><option>Site</option><option>Land</option></select></div>
+<div class="actions"><button class="btn" id="filterBtn" type="button">Apply</button><button class="btn secondary" id="clearBtn" type="button">Clear</button></div>
+</div>
+<div class="msg" id="listMsg"></div>
+<div class="table-wrap"><table class="table"><thead><tr><th>ID</th><th>Property</th><th>Location</th><th>Type</th><th>Area</th><th>BHK</th><th>Price</th><th>Owner</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div>
+<div class="pager"><div class="pageinfo" id="pageInfo">Page 1</div><div class="actions"><button class="small-btn" id="prevBtn" type="button">Previous</button><button class="small-btn" id="nextBtn" type="button">Next</button></div></div>
+</section>
+</div>
+</main>
+
+<div class="modal" id="editModal"><div class="modal-card"><div class="modal-head"><div><div class="eyebrow">Edit listing</div><h2>Update property</h2></div><button class="close" id="editClose" type="button">×</button></div><form id="editForm"><input id="editId" type="hidden"><div class="edit-grid">
+<div class="field"><label>District</label><select id="editDistrict" required></select></div>
+<div class="field"><label>Taluk</label><select id="editTaluk" required></select></div>
+<div class="field"><label>Village</label><select id="editVillage"></select></div>
+<div class="field wide"><label>Title</label><input id="editTitle" required></div>
+<div class="field"><label>Property type</label><select id="editType" required><option>House</option><option>Apartment</option><option>Villa</option><option>Plot</option><option>Site</option><option>Land</option></select></div>
+<div class="field"><label>BHK</label><input id="editBhk"></div>
+<div class="field"><label>Area sqft</label><input id="editArea" type="number" min="1" required></div>
+<div class="field"><label>Price</label><input id="editPrice" type="number" min="1" required></div>
+<div class="field"><label>Source</label><input id="editSource"></div>
+<div class="field"><label>Owner name</label><input id="editOwner"></div>
+<div class="field wide"><label>Owner contact</label><input id="editContact"></div>
+</div><div class="note">Changing a property's price automatically recalculates its price per square foot.</div><div class="actions" style="margin-top:16px"><button class="btn" type="submit">Save changes</button><button class="btn secondary" id="editCancel" type="button">Cancel</button></div><div class="msg" id="editMsg"></div></form></div></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const money=n=>{n=Number(n||0);if(n>=1e7)return'₹'+(n/1e7).toFixed(2)+' Cr';if(n>=1e5)return'₹'+(n/1e5).toFixed(2)+' L';return'₹'+Math.round(n).toLocaleString('en-IN')};
+const num=n=>Number(n||0).toLocaleString('en-IN');
+const state={page:1,pageSize:30,total:0,totalPages:1,rows:[]};
+let districts=[];
+async function getJSON(u,o){const r=await fetch(u,o);const d=await r.json().catch(()=>({message:'Request failed'}));if(!r.ok)throw new Error(d.message||('HTTP '+r.status));return d}
+function setMsg(id,text,ok=false){$(id).textContent=text||'';$(id).style.color=ok?'#8fe0bb':'#ffaaa7'}
+async function loadDistrictOptions(){districts=await getJSON('/api/districts');const names=districts.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('');$('district').innerHTML='<option value="">Select District</option>'+names;$('filterDistrict').innerHTML='<option value="">All districts</option>'+names;$('editDistrict').innerHTML='<option value="">Select District</option>'+names}
+async function loadTaluksFor(select,id,placeholder){select.innerHTML=`<option value="">${placeholder}</option>`;if(!id)return;const d=await getJSON('/api/taluks/'+encodeURIComponent(id));select.innerHTML=`<option value="">${placeholder}</option>`+d.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}
+async function loadVillagesFor(select,id,placeholder){select.innerHTML=`<option value="">${placeholder}</option>`;if(!id)return;const d=await getJSON('/api/villages/'+encodeURIComponent(id));select.innerHTML=`<option value="">${placeholder}</option>`+d.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}
+$('district').onchange=()=>loadTaluksFor($('taluk'),$('district').value,'Select Taluk').then(()=>loadVillagesFor($('village'),'','Select Village'));
+$('taluk').onchange=()=>loadVillagesFor($('village'),$('taluk').value,'Select Village');
+$('filterDistrict').onchange=()=>loadTaluksFor($('filterTaluk'),$('filterDistrict').value,'All taluks').then(()=>loadVillagesFor($('filterVillage'),'','All villages'));
+$('filterTaluk').onchange=()=>loadVillagesFor($('filterVillage'),$('filterTaluk').value,'All villages');
+$('editDistrict').onchange=()=>loadTaluksFor($('editTaluk'),$('editDistrict').value,'Select Taluk').then(()=>loadVillagesFor($('editVillage'),'','Select Village'));
+$('editTaluk').onchange=()=>loadVillagesFor($('editVillage'),$('editTaluk').value,'Select Village');
+function makeListQuery(){const p=new URLSearchParams({page:String(state.page),page_size:String(state.pageSize)});const values={q:$('q').value.trim(),district:$('filterDistrict').value,taluk:$('filterTaluk').value,village:$('filterVillage').value,propertyType:$('filterType').value};Object.entries(values).forEach(([k,v])=>{if(v)p.set(k,v)});return p.toString()}
+function updateStats(a){$('statTotal').textContent=num(a?.total||0);const map={};(a?.property_types||[]).forEach(x=>map[String(x.label).toLowerCase()]=Number(x.value||0));$('statHouse').textContent=num(map.house||0);$('statApartment').textContent=num(map.apartment||0);$('statVilla').textContent=num(map.villa||0);$('statPlot').textContent=num((map.plot||0)+(map.site||0)+(map.land||0))}
+async function loadList(){setMsg('listMsg','Loading...',true);try{const d=await getJSON('/api/properties?'+makeListQuery());state.rows=d.results||[];state.total=Number(d.pagination?.total||0);state.totalPages=Math.max(Number(d.pagination?.total_pages||1),1);state.page=Number(d.pagination?.page||state.page)||1;renderRows();$('pageInfo').textContent=`Page ${state.page} of ${state.totalPages} · ${num(state.total)} total`;$('prevBtn').disabled=state.page<=1;$('nextBtn').disabled=state.page>=state.totalPages;updateStats(d.analytics);setMsg('listMsg','',true)}catch(e){setMsg('listMsg',e.message)}}
+function renderRows(){const body=$('rows');if(!state.rows.length){body.innerHTML='<tr><td colspan="9" style="color:#748178">No properties matched the current filters.</td></tr>';return}body.innerHTML=state.rows.map(p=>`<tr><td>#${p.id}</td><td class="title-cell"><div class="title-main">${esc(p.title||'Property')}</div><span class="title-sub">${esc(p.source||'No source')}</span></td><td>${esc(p.village||'—')} · ${esc(p.taluk||'—')} · ${esc(p.district||'Karnataka')}</td><td><span class="tag">${esc(p.property_type||'—')}</span></td><td>${p.area_sqft?num(p.area_sqft)+' sqft':'—'}</td><td>${p.bhk||'—'}</td><td>${money(p.price)}</td><td>${esc(p.owner_name||'—')}<div style="color:#738178;margin-top:3px">${esc(p.owner_contact||'')}</div></td><td><div class="row-actions"><button class="small-btn edit" type="button" data-edit="${p.id}">Edit</button><button class="small-btn delete" type="button" data-delete="${p.id}">Delete</button></div></td></tr>`).join('');body.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openEdit(Number(b.dataset.edit)));body.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>deleteProperty(Number(b.dataset.delete)))}
+function findRow(id){return state.rows.find(x=>Number(x.id)===Number(id))}
+async function openEdit(id){const p=findRow(id);if(!p)return;setMsg('editMsg','');$('editModal').classList.add('show');$('editId').value=id;$('editTitle').value=p.title||'';$('editType').value=p.property_type||'House';$('editBhk').value=p.bhk||'';$('editArea').value=p.area_sqft||'';$('editPrice').value=p.price||'';$('editSource').value=p.source||'';$('editOwner').value=p.owner_name||'';$('editContact').value=p.owner_contact||'';$('editDistrict').value=p.district_id||'';await loadTaluksFor($('editTaluk'),p.district_id,'Select Taluk');$('editTaluk').value=p.taluk_id||'';await loadVillagesFor($('editVillage'),p.taluk_id,'Select Village');$('editVillage').value=p.village_id||''}
+async function deleteProperty(id){const p=findRow(id);if(!p)return;if(!confirm(`Delete property #${id} — ${p.title||'Property'}?`))return;setMsg('listMsg','Deleting...');try{const d=await getJSON('/api/admin/properties/'+id,{method:'DELETE'});setMsg('listMsg',d.message,true);await loadList()}catch(e){setMsg('listMsg',e.message)}}
+$('addForm').onsubmit=async e=>{e.preventDefault();setMsg('addMsg','Saving...');try{const d=await getJSON('/api/properties',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({district:$('district').value,taluk:$('taluk').value,village:$('village').value,title:$('title').value.trim(),propertyType:$('type').value,bhk:$('bhk').value.trim(),area:$('area').value,price:$('price').value,source:$('source').value.trim(),ownerName:$('ownerName').value.trim(),ownerContact:$('ownerContact').value.trim()})});setMsg('addMsg',d.message,true);e.target.reset();$('taluk').innerHTML='<option value="">Select Taluk</option>';$('village').innerHTML='<option value="">Select Village</option>';await loadList()}catch(err){setMsg('addMsg',err.message)}};
+$('filterBtn').onclick=()=>{state.page=1;loadList()};$('clearBtn').onclick=async()=>{$('q').value='';$('filterDistrict').value='';$('filterType').value='';$('filterTaluk').innerHTML='<option value="">All taluks</option>';$('filterVillage').innerHTML='<option value="">All villages</option>';state.page=1;await loadList()};$('prevBtn').onclick=()=>{if(state.page>1){state.page--;loadList()}};$('nextBtn').onclick=()=>{if(state.page<state.totalPages){state.page++;loadList()}};$('q').addEventListener('keydown',e=>{if(e.key==='Enter'){state.page=1;loadList()}});
+$('editClose').onclick=()=>$('editModal').classList.remove('show');$('editCancel').onclick=()=>$('editModal').classList.remove('show');$('editModal').addEventListener('click',e=>{if(e.target===$('editModal'))$('editModal').classList.remove('show')});
+$('editForm').onsubmit=async e=>{e.preventDefault();setMsg('editMsg','Saving changes...');try{const id=$('editId').value;const d=await getJSON('/api/admin/properties/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({district:$('editDistrict').value,taluk:$('editTaluk').value,village:$('editVillage').value,title:$('editTitle').value.trim(),propertyType:$('editType').value,bhk:$('editBhk').value.trim(),area:$('editArea').value,price:$('editPrice').value,source:$('editSource').value.trim(),ownerName:$('editOwner').value.trim(),ownerContact:$('editContact').value.trim()})});setMsg('editMsg',d.message,true);setTimeout(async()=>{$('editModal').classList.remove('show');await loadList()},350)}catch(err){setMsg('editMsg',err.message)}};
+(async()=>{try{await loadDistrictOptions();await loadList()}catch(e){setMsg('listMsg',e.message)}})();
+</script>
+</body></html>
