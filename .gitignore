@@ -37,3 +37,44 @@ htmlcov/
 secrets.json
 credentials.json
 database/realestate.db
+
+
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Flask / local runtime
+instance/
+*.log
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local database backups / temporary files
+*.db-wal
+*.db-shm
+*.bak
+
+# Build / test caches
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Credential files
+secrets.json
+credentials.json
