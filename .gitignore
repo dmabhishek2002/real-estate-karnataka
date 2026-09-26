@@ -1,32 +1,21 @@
 # Python
 __pycache__/
-**/__pycache__/
 *.py[cod]
 *.pyo
 
-# Virtual environments
+# Virtual environment
 .venv/
 venv/
 env/
 
-# Secrets
+# Environment / secrets
 .env
 .env.*
 !.env.example
 
-# Flask / logs
+# Flask / local runtime
 instance/
 *.log
-
-# SQLite temporary/backup files
-*.db-wal
-*.db-shm
-*.bak
-database/realestate_backup.db
-
-# Local GIS/import files
-*.zip
-data/karnataka_villages.zip/
 
 # IDE / OS
 .vscode/
@@ -34,8 +23,17 @@ data/karnataka_villages.zip/
 .DS_Store
 Thumbs.db
 
-# Testing
+# Local database temporary files
+*.db-wal
+*.db-shm
+*.bak
+
+# Build / test caches
 .pytest_cache/
 .coverage
 htmlcov/
-database/*.db
+
+# Credential files
+secrets.json
+credentials.json
+database/realestate.db
