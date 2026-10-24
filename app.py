@@ -106,10 +106,6 @@ def prepare_database_from_backup():
                 ]
                 if common_columns:
                     column_sql = ", ".join(f'"{name}"' for name in common_columns)
-                    target.execute(
-                        f'INSERT OR IGNORE INTO "{table_name}" ({column_sql}) '
-                        f'SELECT {column_sql} FROM backup_db_placeholder'
-                    ) if False else None
                     # SQLite cannot SELECT across separate connections directly,
                     # so copy rows using the shared column list.
                     rows = source.execute(
