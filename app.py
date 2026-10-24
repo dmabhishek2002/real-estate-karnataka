@@ -473,9 +473,92 @@ def ensure_plot_for_every_village():
         connection.close()
 
 
+def ensure_apartment_for_every_taluk():
+    """
+    Add one clearly labelled illustrative apartment listing to each taluk
+    that does not already have apartment/flat inventory.
+    """
+    connection = get_db_connection()
+    try:
+        taluks = connection.execute(
+            """
+            SELECT
+                t.id AS taluk_id,
+                t.name AS taluk_name,
+                d.id AS district_id,
+                d.name AS district_name,
+                MIN(v.id) AS village_id,
+                MIN(v.name) AS village_name
+            FROM taluks t
+            JOIN districts d ON d.id = t.district_id
+            LEFT JOIN villages v ON v.taluk_id = t.id
+            GROUP BY t.id, t.name, d.id, d.name
+            ORDER BY d.name, t.name
+            """
+        ).fetchall()
+
+        existing_rows = connection.execute(
+            """
+            SELECT taluk_id, COUNT(*) AS apartment_count
+            FROM properties
+            WHERE LOWER(TRIM(COALESCE(property_type, ''))) IN ('apartment', 'flat')
+              AND taluk_id IS NOT NULL
+            GROUP BY taluk_id
+            """
+        ).fetchall()
+        apartment_counts = {
+            row["taluk_id"]: int(row["apartment_count"] or 0)
+            for row in existing_rows
+        }
+
+        inserts = []
+        for taluk in taluks:
+            if apartment_counts.get(taluk["taluk_id"], 0) > 0:
+                continue
+
+            seed_number = int(taluk["taluk_id"])
+            bhk = 2 + (seed_number % 2)
+            area = 850 + ((seed_number * 83) % 950)
+            price_per_sqft = 2800 + ((int(taluk["district_id"]) * 137) % 2700)
+            price = int(round((area * price_per_sqft) / 50000) * 50000)
+            location = taluk["village_name"] or taluk["taluk_name"]
+            title = f"{bhk} BHK Apartment – {taluk['taluk_name']}"
+            description = (
+                f"Illustrative apartment inventory entry for {location}, "
+                f"{taluk['taluk_name']}, {taluk['district_name']}. "
+                "Price and availability are sample values for demonstration "
+                "and must be verified independently before any purchase."
+            )
+            inserts.append((
+                taluk["district_id"], taluk["taluk_id"], taluk["village_id"],
+                "Apartment", str(bhk), title, area, price, price_per_sqft,
+                description, "Illustrative Karnataka inventory", None, None
+            ))
+
+        if inserts:
+            connection.executemany(
+                """
+                INSERT INTO properties (
+                    district_id, taluk_id, village_id, property_type, bhk, title,
+                    area_sqft, price, price_per_sqft, description, source,
+                    owner_name, owner_contact
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                inserts
+            )
+            connection.commit()
+            print(
+                f"Added {len(inserts):,} illustrative apartment listings "
+                "across Karnataka taluks."
+            )
+    finally:
+        connection.close()
+
+
 ensure_optional_property_columns()
 ensure_multiple_houses_for_every_village()
 ensure_plot_for_every_village()
+ensure_apartment_for_every_taluk()
 
 
 def clean_listing_text():
