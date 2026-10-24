@@ -820,6 +820,51 @@ body[data-theme="dark"] .price-table th,body[data-theme="dark"] .price-table td{
 @keyframes templeAurora{0%{background-position:0% 45%;opacity:.45}50%{background-position:100% 55%;opacity:.85}100%{background-position:35% 100%;opacity:.58}}
 @media(prefers-reduced-motion:reduce){.hero::after{animation:none}}
 
+
+/* ============================================================
+   KARNATAKA TEMPLE + ANIMATED MIXED-COLOUR HERO
+   Strong, final overrides so this theme wins over earlier styles.
+   ============================================================ */
+.hero{isolation:isolate;background:#090b18!important}
+.hero-media{
+  inset:-8%!important;
+  background-image:
+    linear-gradient(180deg,rgba(6,8,22,.12) 0%,rgba(6,8,22,.28) 42%,#0B0B0F 100%),
+    linear-gradient(90deg,rgba(5,8,22,.64) 0%,rgba(5,8,22,.18) 72%,rgba(5,8,22,.32) 100%),
+    url('https://images.unsplash.com/photo-1606293926075-69a00dbfde81?auto=format&fit=crop&w=2400&q=88')!important;
+  background-position:center,center,center 45%!important;
+  background-size:cover!important;
+  animation:templeHeroDrift 24s ease-in-out infinite alternate;
+  transform:scale(1.02);
+}
+.hero::before{
+  content:"";position:absolute;inset:-15%;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(ellipse at 15% 25%,rgba(0,196,255,.35),transparent 35%),
+    radial-gradient(ellipse at 78% 20%,rgba(174,55,255,.32),transparent 36%),
+    radial-gradient(ellipse at 70% 72%,rgba(255,105,55,.25),transparent 34%),
+    radial-gradient(ellipse at 28% 80%,rgba(0,255,190,.22),transparent 32%);
+  background-size:140% 140%;
+  mix-blend-mode:screen;
+  filter:blur(24px);
+  opacity:.78;
+  animation:templeColourFlow 13s ease-in-out infinite alternate;
+}
+.hero-vignette{z-index:2!important;background:linear-gradient(180deg,rgba(5,7,20,.08),rgba(5,7,20,.10) 35%,rgba(5,7,20,.82) 100%)!important}
+.hero-content{z-index:3!important}
+.hero-title .line:nth-child(2) .word{color:#c8f7ff!important;text-shadow:0 0 35px rgba(0,205,255,.22)}
+.hero-copy{border-left-color:rgba(0,220,255,.7)!important}
+.eyebrow{color:#8deaff!important}
+.btn-primary{background:linear-gradient(110deg,#45d9ff,#8e7bff,#ff9b70)!important;color:#07101c!important;box-shadow:0 8px 30px rgba(69,217,255,.18)}
+.btn-ghost{border-color:rgba(120,220,255,.48)!important}
+@keyframes templeColourFlow{
+  0%{transform:translate3d(-3%,-2%,0) rotate(0deg) scale(1);filter:hue-rotate(0deg)}
+  50%{transform:translate3d(3%,2%,0) rotate(4deg) scale(1.08);filter:hue-rotate(35deg)}
+  100%{transform:translate3d(-1%,4%,0) rotate(-3deg) scale(1.04);filter:hue-rotate(-25deg)}
+}
+@keyframes templeHeroDrift{from{transform:scale(1.02) translate3d(-.5%,0,0)}to{transform:scale(1.10) translate3d(.5%,-1%,0)}}
+@media(prefers-reduced-motion:reduce){.hero-media,.hero::before{animation:none!important}}
+
 </style>
 
 <style id="architectural-monochrome-theme">
