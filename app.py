@@ -1,15 +1,8 @@
 from flask import Flask, render_template, jsonify, request, session, redirect
 import sqlite3
 import os
-import re
-import time
 from functools import wraps
 from werkzeug.security import check_password_hash, generate_password_hash
-
-try:
-    from twilio.rest import Client
-except ImportError:
-    Client = None
 
 app = Flask(__name__)
 
@@ -73,37 +66,6 @@ def ensure_user_table():
         connection.commit()
     finally:
         connection.close()
-
-
-def normalize_indian_phone(value):
-    """Return an Indian phone number in E.164 format."""
-    phone = re.sub(r"[^0-9+]", "", str(value or "").strip())
-    if phone.startswith("+91"):
-        digits = phone[3:]
-    elif phone.startswith("91") and len(phone) == 12:
-        digits = phone[2:]
-    else:
-        digits = phone
-
-    if not re.fullmatch(r"[6-9]\d{9}", digits):
-        return None
-    return "+91" + digits
-
-
-def twilio_client():
-    if Client is None:
-        return None
-
-    account_sid = os.getenv("TWILIO_ACCOUNT_SID", "").strip()
-    auth_token = os.getenv("TWILIO_AUTH_TOKEN", "").strip()
-    if not account_sid or not auth_token:
-        return None
-
-    return Client(account_sid, auth_token)
-
-
-def twilio_service_sid():
-    return os.getenv("TWILIO_VERIFY_SERVICE_SID", "").strip()
 
 
 def user_logged_in():
@@ -455,12 +417,13 @@ def user_register_api():
     name = str(data.get("name", "")).strip()
     email = str(data.get("email", "")).strip().lower()
     password = str(data.get("password", ""))
-    phone = normalize_indian_phone(data.get("phone"))
+    # Phone number is optional; user authentication uses email and password only.
+    phone = str(data.get("phone", "")).strip() or None
 
-    if not name or not email or not password or not phone:
+    if not name or not email or not password:
         return jsonify({
             "success": False,
-            "message": "Name, email, phone number and password are required."
+            "message": "Name, email and password are required."
         }), 400
 
     if len(name) < 2:
@@ -494,16 +457,17 @@ def user_register_api():
                 "message": "An account with this email already exists."
             }), 409
 
-        existing_phone = connection.execute(
-            "SELECT id FROM users WHERE phone = ?",
-            (phone,)
-        ).fetchone()
+        if phone:
+            existing_phone = connection.execute(
+                "SELECT id FROM users WHERE phone = ?",
+                (phone,)
+            ).fetchone()
 
-        if existing_phone:
-            return jsonify({
-                "success": False,
-                "message": "An account with this phone number already exists."
-            }), 409
+            if existing_phone:
+                return jsonify({
+                    "success": False,
+                    "message": "An account with this phone number already exists."
+                }), 409
 
         cursor = connection.execute(
             """
@@ -535,154 +499,6 @@ def user_register_api():
         }), 500
     finally:
         connection.close()
-
-
-@app.route("/api/user/send-otp", methods=["POST"])
-def user_send_otp_api():
-    data = request.get_json(silent=True) or {}
-    phone = normalize_indian_phone(data.get("phone"))
-
-    if not phone:
-        return jsonify({
-            "success": False,
-            "message": "Enter a valid 10-digit Indian mobile number."
-        }), 400
-
-    connection = get_db_connection()
-    try:
-        registered = connection.execute(
-            "SELECT id FROM users WHERE phone = ?",
-            (phone,)
-        ).fetchone()
-    finally:
-        connection.close()
-
-    if not registered:
-        return jsonify({
-            "success": False,
-            "message": "This phone number is not registered. Create an account first."
-        }), 404
-
-    client = twilio_client()
-    service_sid = twilio_service_sid()
-    if client is None or not service_sid:
-        return jsonify({
-            "success": False,
-            "message": "Phone OTP is not configured. Add your Twilio credentials first."
-        }), 503
-
-    last_sent = float(session.get("otp_last_sent", 0) or 0)
-    if time.time() - last_sent < 45:
-        remaining = max(1, 45 - int(time.time() - last_sent))
-        return jsonify({
-            "success": False,
-            "message": f"Please wait {remaining} seconds before requesting another OTP."
-        }), 429
-
-    try:
-        verification = client.verify.v2.services(service_sid).verifications.create(
-            channel="sms",
-            to=phone
-        )
-
-        if str(getattr(verification, "status", "")).lower() not in {"pending", "sent"}:
-            return jsonify({
-                "success": False,
-                "message": "Unable to send OTP right now."
-            }), 502
-
-        session["otp_phone"] = phone
-        session["otp_last_sent"] = time.time()
-
-        return jsonify({
-            "success": True,
-            "message": "OTP sent to your mobile number."
-        })
-    except Exception as error:
-        return jsonify({
-            "success": False,
-            "message": "OTP service error: " + str(error)
-        }), 502
-
-
-@app.route("/api/user/verify-otp", methods=["POST"])
-def user_verify_otp_api():
-    data = request.get_json(silent=True) or {}
-    phone = normalize_indian_phone(data.get("phone"))
-    code = str(data.get("code", "")).strip()
-
-    if not phone or not re.fullmatch(r"\d{4,10}", code):
-        return jsonify({
-            "success": False,
-            "message": "Enter a valid phone number and OTP."
-        }), 400
-
-    if session.get("otp_phone") != phone:
-        return jsonify({
-            "success": False,
-            "message": "Request a new OTP for this phone number."
-        }), 400
-
-    client = twilio_client()
-    service_sid = twilio_service_sid()
-    if client is None or not service_sid:
-        return jsonify({
-            "success": False,
-            "message": "Phone OTP is not configured. Add your Twilio credentials first."
-        }), 503
-
-    try:
-        verification_check = client.verify.v2.services(service_sid).verification_checks.create(
-            to=phone,
-            code=code
-        )
-    except Exception as error:
-        return jsonify({
-            "success": False,
-            "message": "OTP verification error: " + str(error)
-        }), 502
-
-    if str(getattr(verification_check, "status", "")).lower() != "approved":
-        return jsonify({
-            "success": False,
-            "message": "Invalid or expired OTP."
-        }), 401
-
-    connection = get_db_connection()
-    try:
-        user = connection.execute(
-            """
-            SELECT id, name, email, phone
-            FROM users
-            WHERE phone = ?
-            """,
-            (phone,)
-        ).fetchone()
-    finally:
-        connection.close()
-
-    if not user:
-        return jsonify({
-            "success": False,
-            "message": "This phone number is not registered. Create an account first."
-        }), 404
-
-    session.clear()
-    session["user_logged_in"] = True
-    session["user_id"] = user["id"]
-    session["user_name"] = user["name"]
-    session["user_email"] = user["email"]
-    session["user_phone"] = user["phone"]
-
-    return jsonify({
-        "success": True,
-        "message": "OTP verified. Sign in successful.",
-        "user": {
-            "name": user["name"],
-            "email": user["email"],
-            "phone": user["phone"]
-        }
-    })
 
 
 @app.route("/api/user/login", methods=["POST"])

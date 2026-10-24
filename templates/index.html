@@ -1502,6 +1502,39 @@ footer{
 .footer-contact{margin-top:6px!important;color:#D9CBD0!important;font-size:10px!important;line-height:1.7!important}
 </style>
 
+<style id="scroll-performance-fix">
+/* Performance patch: reduce GPU memory pressure and expensive paint effects. */
+html { scroll-behavior: auto; }
+.scroll-film-frame {
+  filter: none !important;
+  clip-path: none !important;
+  transition: none !important;
+  will-change: opacity, transform !important;
+  backface-visibility: hidden;
+}
+.horizontal-panel img,
+.moving-card,
+.moving-card img {
+  will-change: auto !important;
+}
+.property-owner-box,
+.view-details-button {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+<style id="representative-stock-photo-label">
+.property-media .photo-reference-tag{position:absolute;left:12px;bottom:12px;z-index:1;padding:6px 9px;border:1px solid rgba(255,255,255,.42);border-radius:999px;background:rgba(15,23,42,.68);color:#fff;font:600 9px/1.2 'DM Sans',sans-serif;letter-spacing:.04em;pointer-events:none}
+.property-detail-main .photo-reference-tag{position:absolute;left:14px;bottom:14px;z-index:3;padding:7px 10px;border:1px solid rgba(255,255,255,.42);border-radius:999px;background:rgba(15,23,42,.72);color:#fff;font:600 10px/1.2 'DM Sans',sans-serif;pointer-events:none}
+</style>
 </head>
 <body>
 <div id="scrollProgress"></div>
@@ -1545,7 +1578,7 @@ footer{
 <section class="section analytics" id="analytics"><div class="container"><div class="analytics-head reveal"><div><div class="eyebrow">04 / MARKET INTELLIGENCE</div><h2 class="display">See the market<br>behind the listings.</h2></div><p>Summary statistics and distribution views generated from the available property dataset.</p></div><div class="analytics-stats reveal"><div class="stat"><small>Total properties</small><strong id="analyticsTotal">—</strong></div><div class="stat"><small>Average price</small><strong id="analyticsAvgPrice">—</strong></div><div class="stat"><small>Average ₹ / sqft</small><strong id="analyticsAvgPsf">—</strong></div><div class="stat"><small>Price range</small><strong id="analyticsPriceRange">—</strong></div></div><div class="analytics-grid stagger"><div class="chart-card"><h3>Property types</h3><div id="propertyTypeChart" class="bars"></div></div><div class="chart-card"><h3>BHK distribution</h3><div id="bhkChart" class="bars"></div></div><div class="chart-card"><h3>Properties by district</h3><div id="districtChart" class="bars"></div></div><div class="chart-card"><h3>Price analysis</h3><div class="price-table-wrap"><table class="price-table comparison-table"><thead><tr><th>Property</th><th>Type</th><th>Price</th><th>₹ / sqft</th></tr></thead><tbody id="priceAnalysisTable"></tbody></table></div></div></div></div></section>
 
 <section class="scroll-video-section cinematic-section" id="scrollVideoSection">
-  <video class="scroll-video" id="scrollVideo" muted playsinline preload="auto">
+  <video class="scroll-video" id="scrollVideo" muted playsinline preload="metadata">
     <source src="{{ url_for('static', filename='video/realestate-scroll.mp4') }}" type="video/mp4">
   </video>
   <div class="scroll-video-overlay"></div>
@@ -1797,37 +1830,35 @@ const DEMO_PROPERTY_PROFILES=[
 {name:'Divya Rao',contact:'+91 90000 11011'},
 {name:'Suresh Nayak',contact:'+91 90000 11012'}
 ];
+// Real stock photography from Pexels; representative images, not photos verified to belong to individual listings.
+// Real camera photographs from Pexels. These are representative stock photos, not verified photos of each listing.
 const PLOT_IMAGES=[
-'https://images.pexels.com/photos/15422584/pexels-photo-15422584.jpeg?auto=compress&cs=tinysrgb&w=1600',
-'https://images.pexels.com/photos/7234976/pexels-photo-7234976.jpeg?auto=compress&cs=tinysrgb&w=1600',
-'https://images.pexels.com/photos/11201060/pexels-photo-11201060.jpeg?auto=compress&cs=tinysrgb&w=1600',
-'https://images.pexels.com/photos/2516858/pexels-photo-2516858.jpeg?auto=compress&cs=tinysrgb&w=1600',
-'https://images.pexels.com/photos/7937291/pexels-photo-7937291.jpeg?auto=compress&cs=tinysrgb&w=1600',
-'https://images.pexels.com/photos/8094663/pexels-photo-8094663.jpeg?auto=compress&cs=tinysrgb&w=1600'
+'https://images.pexels.com/photos/15422584/pexels-photo-15422584.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/27062931/pexels-photo-27062931.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/32370506/pexels-photo-32370506.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/35101084/pexels-photo-35101084.jpeg?auto=compress&cs=tinysrgb&w=1200'
 ];
 const HOUSE_IMAGES=[
-'https://images.pexels.com/photos/18078684/pexels-photo-18078684.jpeg?auto=compress&cs=tinysrgb&w=1600',
-'https://images.pexels.com/photos/19344325/pexels-photo-19344325.jpeg?auto=compress&cs=tinysrgb&w=1600',
-'https://images.pexels.com/photos/15422346/pexels-photo-15422346.jpeg?auto=compress&cs=tinysrgb&w=1600',
-'https://images.unsplash.com/photo-1600585152915-d208bec867a1?auto=format&fit=crop&w=1600&q=88',
-'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1600&q=88',
-'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1600&q=88'
+'https://images.pexels.com/photos/7031594/pexels-photo-7031594.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/7031595/pexels-photo-7031595.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/7031593/pexels-photo-7031593.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/5997994/pexels-photo-5997994.jpeg?auto=compress&cs=tinysrgb&w=1200'
 ];
 const APARTMENT_IMAGES=[
-'https://images.pexels.com/photos/13240092/pexels-photo-13240092.jpeg?auto=compress&cs=tinysrgb&w=1600',
-'https://images.pexels.com/photos/11631278/pexels-photo-11631278.jpeg?auto=compress&cs=tinysrgb&w=1600',
-'https://images.pexels.com/photos/10894324/pexels-photo-10894324.jpeg?auto=compress&cs=tinysrgb&w=1600',
-'https://images.pexels.com/photos/14998334/pexels-photo-14998334.jpeg?auto=compress&cs=tinysrgb&w=1600',
-'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1600&q=88',
-'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1600&q=88'
+'https://images.pexels.com/photos/35114454/pexels-photo-35114454.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/7672058/pexels-photo-7672058.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/28304970/pexels-photo-28304970.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/9285535/pexels-photo-9285535.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/7953124/pexels-photo-7953124.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/5505128/pexels-photo-5505128.jpeg?auto=compress&cs=tinysrgb&w=1200'
 ];
 const VILLA_IMAGES=[
-'https://images.pexels.com/photos/13203194/pexels-photo-13203194.jpeg?auto=compress&cs=tinysrgb&w=1600',
-'https://images.pexels.com/photos/5997994/pexels-photo-5997994.jpeg?auto=compress&cs=tinysrgb&w=1600',
-'https://images.pexels.com/photos/8134847/pexels-photo-8134847.jpeg?auto=compress&cs=tinysrgb&w=1600',
-'https://images.pexels.com/photos/8134750/pexels-photo-8134750.jpeg?auto=compress&cs=tinysrgb&w=1600',
-'https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1600&q=88',
-'https://images.unsplash.com/photo-1600573472550-8090b5e0745e?auto=format&fit=crop&w=1600&q=88'
+'https://images.pexels.com/photos/7031594/pexels-photo-7031594.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/31737842/pexels-photo-31737842.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/7031593/pexels-photo-7031593.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/7031595/pexels-photo-7031595.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/5997994/pexels-photo-5997994.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/7031602/pexels-photo-7031602.jpeg?auto=compress&cs=tinysrgb&w=1200'
 ];
 function stablePropertyNumber(p){const n=Number(p?.id);if(Number.isFinite(n)&&n>0)return n;return Math.abs(String(p?.title||'property').split('').reduce((a,c)=>a+c.charCodeAt(0),0));}
 function propertyImageSetFor(p){const t=String(p?.property_type||'').toLowerCase();if(t.includes('plot')||t.includes('site')||t.includes('land'))return PLOT_IMAGES;if(t.includes('villa'))return VILLA_IMAGES;if(t.includes('apartment')||t.includes('flat'))return APARTMENT_IMAGES;return HOUSE_IMAGES;}
@@ -1860,7 +1891,7 @@ function renderResults(){
     const ownerContact=ownerValue(p,'owner_contact');
     const image=propertyImageFor(p);
     card.dataset.propertyId=id;
-    card.innerHTML=`<div class="property-media"><img class="property-photo" src="${image}" alt="${escapeHTML(p.property_type||'Property')} photo" loading="lazy"></div><span class="property-index">${String(i+1).padStart(2,'0')}</span><span class="property-type">${escapeHTML(p.property_type||'Property')}</span><div><h3>${escapeHTML(title||'Property')}</h3><div class="property-location">${escapeHTML(p.village||'—')} · ${escapeHTML(p.taluk||'—')} · ${escapeHTML(p.district||'Karnataka')}</div><div class="property-meta"><span>${p.area_sqft?num(p.area_sqft)+' sqft':'—'}</span>${bhkMarkup}<span>${p.price_per_sqft?'₹'+num(p.price_per_sqft)+' / sqft':'₹ / sqft —'}</span></div><div class="property-price"><strong>${money(p.price)}</strong></div><div class="property-owner-grid"><div class="property-owner-box"><strong>Owner name</strong><span>${escapeHTML(ownerName)}</span></div><div class="property-owner-box"><strong>Contact</strong><span>${escapeHTML(ownerContact)}</span></div></div><div class="property-actions"><button class="view-details-button" type="button" onclick="event.stopPropagation();openPropertyDetails(${id})">View Details</button><button class="compare-button" type="button" onclick="event.stopPropagation();toggleCompare(${id},this)">Add to Compare</button></div></div>`;
+    card.innerHTML=`<div class="property-media"><img class="property-photo" src="${image}" alt="Representative ${escapeHTML(p.property_type||'property')} stock photo" loading="lazy" decoding="async"><span class="photo-reference-tag">Reference photo</span></div><span class="property-index">${String(i+1).padStart(2,'0')}</span><span class="property-type">${escapeHTML(p.property_type||'Property')}</span><div><h3>${escapeHTML(title||'Property')}</h3><div class="property-location">${escapeHTML(p.village||'—')} · ${escapeHTML(p.taluk||'—')} · ${escapeHTML(p.district||'Karnataka')}</div><div class="property-meta"><span>${p.area_sqft?num(p.area_sqft)+' sqft':'—'}</span>${bhkMarkup}<span>${p.price_per_sqft?'₹'+num(p.price_per_sqft)+' / sqft':'₹ / sqft —'}</span></div><div class="property-price"><strong>${money(p.price)}</strong></div><div class="property-owner-grid"><div class="property-owner-box"><strong>Owner name</strong><span>${escapeHTML(ownerName)}</span></div><div class="property-owner-box"><strong>Contact</strong><span>${escapeHTML(ownerContact)}</span></div></div><div class="property-actions"><button class="view-details-button" type="button" onclick="event.stopPropagation();openPropertyDetails(${id})">View Details</button><button class="compare-button" type="button" onclick="event.stopPropagation();toggleCompare(${id},this)">Add to Compare</button></div></div>`;
     card.addEventListener('click',e=>{if(e.target.closest('button'))return;openPropertyDetails(id);});
     const img=card.querySelector('.property-photo');
     img.addEventListener('error',()=>handlePropertyImageError(img,p),{once:false});
@@ -1889,7 +1920,7 @@ function openPropertyDetails(id){
   const modal=document.createElement('div');
   modal.className='property-detail-modal show';
   modal.id='propertyDetailModal';
-  modal.innerHTML=`<div class="property-detail-panel"><div class="property-detail-top"><div class="property-detail-gallery"><div class="property-detail-main"><img id="detailMainImage" src="${gallery[0]}" alt="Property photo" referrerpolicy="no-referrer"><button class="gallery-arrow prev" id="detailPrev">‹</button><button class="gallery-arrow next" id="detailNext">›</button><div class="property-gallery-badge"><span id="detailImageCount">1</span> / ${gallery.length} photos</div></div><div class="gallery-thumbs" id="detailThumbs">${gallery.map((src,i)=>`<button class="gallery-thumb ${i===0?'active':''}" data-gallery-index="${i}"><img src="${src}" alt="Property photo ${i+1}" referrerpolicy="no-referrer"></button>`).join('')}</div></div><div class="property-detail-info"><div><div class="property-detail-head"><div><div class="eyebrow">Property details</div><div class="property-detail-title">${escapeHTML(title||'Property')}</div><div class="property-detail-location">${escapeHTML(property.village||'—')} · ${escapeHTML(property.taluk||'—')} · ${escapeHTML(property.district||'Karnataka')}</div></div><button class="property-detail-close" id="detailClose">×</button></div><div class="property-detail-stats"><div class="property-detail-stat"><small>Type</small><strong>${escapeHTML(property.property_type||'Property')}</strong></div><div class="property-detail-stat"><small>Area</small><strong>${property.area_sqft?num(property.area_sqft)+' sqft':'—'}</strong></div>${plot?'':`<div class="property-detail-stat"><small>BHK</small><strong>${property.bhk?escapeHTML(String(property.bhk))+' BHK':'—'}</strong></div>`}<div class="property-detail-stat"><small>₹ / sqft</small><strong>${property.price_per_sqft?'₹'+num(property.price_per_sqft):'—'}</strong></div></div><div class="property-detail-price">${money(property.price)}</div><div class="property-detail-owner"><div class="property-detail-owner-box"><small>Owner name</small><strong>${escapeHTML(ownerName)}</strong></div><div class="property-detail-owner-box"><small>Contact</small><strong>${escapeHTML(ownerContact)}</strong></div></div><div class="property-detail-note">Photo gallery is illustrative demo imagery matched to the property type. The property facts above come from your project database.</div></div></div></div></div>`;
+  modal.innerHTML=`<div class="property-detail-panel"><div class="property-detail-top"><div class="property-detail-gallery"><div class="property-detail-main"><img id="detailMainImage" src="${gallery[0]}" alt="Representative property stock photo" loading="lazy" decoding="async" referrerpolicy="no-referrer"><span class="photo-reference-tag">Reference photo</span><button class="gallery-arrow prev" id="detailPrev">‹</button><button class="gallery-arrow next" id="detailNext">›</button><div class="property-gallery-badge"><span id="detailImageCount">1</span> / ${gallery.length} photos</div></div><div class="gallery-thumbs" id="detailThumbs">${gallery.map((src,i)=>`<button class="gallery-thumb ${i===0?'active':''}" data-gallery-index="${i}"><img src="${src}" alt="Property photo ${i+1}" referrerpolicy="no-referrer"></button>`).join('')}</div></div><div class="property-detail-info"><div><div class="property-detail-head"><div><div class="eyebrow">Property details</div><div class="property-detail-title">${escapeHTML(title||'Property')}</div><div class="property-detail-location">${escapeHTML(property.village||'—')} · ${escapeHTML(property.taluk||'—')} · ${escapeHTML(property.district||'Karnataka')}</div></div><button class="property-detail-close" id="detailClose">×</button></div><div class="property-detail-stats"><div class="property-detail-stat"><small>Type</small><strong>${escapeHTML(property.property_type||'Property')}</strong></div><div class="property-detail-stat"><small>Area</small><strong>${property.area_sqft?num(property.area_sqft)+' sqft':'—'}</strong></div>${plot?'':`<div class="property-detail-stat"><small>BHK</small><strong>${property.bhk?escapeHTML(String(property.bhk))+' BHK':'—'}</strong></div>`}<div class="property-detail-stat"><small>₹ / sqft</small><strong>${property.price_per_sqft?'₹'+num(property.price_per_sqft):'—'}</strong></div></div><div class="property-detail-price">${money(property.price)}</div><div class="property-detail-owner"><div class="property-detail-owner-box"><small>Owner name</small><strong>${escapeHTML(ownerName)}</strong></div><div class="property-detail-owner-box"><small>Contact</small><strong>${escapeHTML(ownerContact)}</strong></div></div><div class="property-detail-note">Photo gallery is illustrative demo imagery matched to the property type. The property facts above come from your project database.</div></div></div></div></div>`;
   document.body.appendChild(modal);
   const main=modal.querySelector('#detailMainImage');
   const thumbs=[...modal.querySelectorAll('.gallery-thumb')];
@@ -1926,7 +1957,7 @@ function syncScrollVideo(){
   const local=clamp(-r.top/travel,0,1);
   const eased=local*local*(3-2*local);
   const target=eased*videoDuration;
-  if(Math.abs(target-lastVideoTime)>0.012){
+  if(Math.abs(target-lastVideoTime)>0.08){
     try{scrollVideo.currentTime=target;lastVideoTime=target}catch(e){}
   }
   if(videoProgressFill) videoProgressFill.style.height=(local*100)+'%';
@@ -2089,91 +2120,66 @@ function updateScrollFilms(){
 
 
 function cinematicFrame(){
-  smoothScrollY += (scrollTarget - smoothScrollY) * 0.075;
+  // Use the browser's real scroll position. Do not interpolate scrollY:
+  // the old custom easing loop caused the page to lag behind the mouse wheel.
+  rafRunning = false;
+  const y = window.scrollY || window.pageYOffset || 0;
+  const docHeight = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+  const progress = clamp(y / docHeight, 0, 1);
 
-  syncScrollVideo();
-  updateImageStories();
-  updateScrollFilms();
+  const progressBar = $('scrollProgress');
+  if (progressBar) progressBar.style.width = (progress * 100) + '%';
+  const nav = $('siteNav');
+  if (nav) nav.classList.toggle('scrolled', y > 30);
 
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  const progress = docHeight > 0 ? smoothScrollY / docHeight : 0;
-
-  $('scrollProgress').style.width = (progress * 100) + '%';
-  $('siteNav').classList.toggle('scrolled', smoothScrollY > 30);
-
-  const hero = document.querySelector('.hero');
-  const heroMedia = $('heroMedia');
-
-  if(hero && heroMedia){
-    const heroRatio = clamp(smoothScrollY / Math.max(hero.offsetHeight,1), 0, 1.2);
-    heroMedia.style.transform = `translate3d(0,${smoothScrollY * 0.14}px,0) scale(${1.05 + heroRatio * 0.085})`;
-    heroMedia.style.filter = `saturate(${1.08 + heroRatio * .08}) contrast(${1.05 + heroRatio * .03}) brightness(${.9 - heroRatio * .06})`;
-  }
-
-  document.querySelectorAll('.cinematic-section').forEach(section => {
+  // Keep scroll-film transitions lightweight: update only the two nearby
+  // frames, and avoid per-frame blur, clip-path and filter recalculation.
+  document.querySelectorAll('[data-scroll-film]').forEach(section => {
     const rect = section.getBoundingClientRect();
-    const vh = window.innerHeight;
-    const center = rect.top + rect.height / 2;
-    const distance = (center - vh / 2) / (vh + rect.height);
-    const p = clamp(distance, -1, 1);
-    const lift = -p * 28;
-    const scale = 1 - Math.abs(p) * 0.018;
-    const opacity = .78 + (1 - Math.abs(p)) * .22;
+    const travel = Math.max(section.offsetHeight - window.innerHeight, 1);
+    const localProgress = clamp(-rect.top / travel, 0, 1);
+    const frames = section.querySelectorAll('[data-film-frame]');
+    const copies = section.querySelectorAll('[data-film-copy]');
+    if (!frames.length) return;
 
-    const content = section.querySelector('.container');
-    if(content){
-      content.style.transform = `translate3d(0,${lift}px,0) scale(${scale})`;
-      content.style.opacity = opacity;
-    }
+    const filmPos = localProgress * Math.max(frames.length - 1, 0);
+    const active = Math.min(Math.floor(filmPos), frames.length - 1);
+    const fraction = filmPos - active;
 
-    const word = section.querySelector('.scene-word');
-    if(word){
-      word.style.transform = `translate3d(${p * 80}px,${p * -28}px,0)`;
-      word.style.opacity = String(.35 + (1 - Math.abs(p)) * .45);
-    }
+    frames.forEach((frame, i) => {
+      if (i === active || i === active + 1) {
+        frame.style.zIndex = i === active + 1 ? '121' : '120';
+        frame.style.opacity = i === active ? String(1 - fraction) : String(fraction);
+        frame.style.transform = 'scale(1.04) translate3d(0,0,0)';
+      } else {
+        frame.style.opacity = '0';
+      }
+    });
 
-    const number = section.querySelector('.scene-number');
-    if(number){
-      number.style.transform = `translate3d(0,${p * -18}px,0)`;
-      number.style.opacity = String(.2 + (1 - Math.abs(p)) * .75);
-    }
+    copies.forEach((copy, i) => {
+      const distance = Math.abs(filmPos - i);
+      copy.style.opacity = String(clamp(1 - distance, 0, 1));
+      copy.style.transform = 'translate3d(0,-50%,0)';
+    });
+
+    const indexEl = section.querySelector('[data-film-index]');
+    const fill = section.querySelector('[data-film-fill]');
+    if (indexEl) indexEl.textContent = String(active + 1).padStart(2, '0');
+    if (fill) fill.style.width = (localProgress * 100) + '%';
   });
 
-  const parallax = document.querySelector('.parallax-image');
-  const banner = document.querySelector('.parallax-banner');
-  if(parallax && banner){
-    const r = banner.getBoundingClientRect();
-    const p = clamp((r.top + r.height / 2 - window.innerHeight / 2) / (window.innerHeight + r.height), -1, 1);
-    parallax.style.transform = `translate3d(0,${p * -110}px,0) scale(1.12)`;
-    parallax.style.filter = `saturate(${1.05 + (1-Math.abs(p))*.12}) contrast(1.04) brightness(${.82 + (1-Math.abs(p))*.10})`;
-  }
-
-  const story = document.querySelector('.story-strip');
-  if(story){
-    const sr = story.getBoundingClientRect();
-    const sp = clamp(1 - Math.abs((sr.top + sr.height/2 - window.innerHeight/2)/(window.innerHeight + sr.height)), 0, 1);
-    story.style.setProperty('--story-glow', sp.toFixed(3));
-  }
-
-  if(Math.abs(scrollTarget - smoothScrollY) > 0.4 || rafRunning){
-    requestAnimationFrame(cinematicFrame);
-  } else {
-    rafRunning = false;
-  }
+  // Scrub video less frequently; tiny seeks cause visible decoder stutter.
+  syncScrollVideo();
 }
 
 function requestCinematicFrame(){
-  if(!rafRunning){
+  if (!rafRunning) {
     rafRunning = true;
     requestAnimationFrame(cinematicFrame);
   }
 }
 
-window.addEventListener('scroll', () => {
-  scrollTarget = window.scrollY;
-  requestCinematicFrame();
-}, {passive:true});
-
+window.addEventListener('scroll', requestCinematicFrame, { passive: true });
 window.addEventListener('resize', requestCinematicFrame);
 
 /* smooth anchor navigation */
@@ -2223,7 +2229,7 @@ loadDistricts();
 refreshAccountNav();
 loadAnalytics();
 renderCompareBar();
-preloadFilmImages();
+// Avoid eagerly decoding every cinematic frame; let the browser load images as needed.
 cinematicFrame();
 </script>
 </body>
