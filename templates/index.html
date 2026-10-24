@@ -1535,6 +1535,31 @@ html { scroll-behavior: auto; }
 .property-media .photo-reference-tag{position:absolute;left:12px;bottom:12px;z-index:1;padding:6px 9px;border:1px solid rgba(255,255,255,.42);border-radius:999px;background:rgba(15,23,42,.68);color:#fff;font:600 9px/1.2 'DM Sans',sans-serif;letter-spacing:.04em;pointer-events:none}
 .property-detail-main .photo-reference-tag{position:absolute;left:14px;bottom:14px;z-index:3;padding:7px 10px;border:1px solid rgba(255,255,255,.42);border-radius:999px;background:rgba(15,23,42,.72);color:#fff;font:600 10px/1.2 'DM Sans',sans-serif;pointer-events:none}
 </style>
+<style id="smooth-scroll-performance-fix">
+/* Reduce main-thread work while scrolling; keep motion GPU-friendly. */
+.scroll-film-frame,.image-story-bg,.moving-card,.moving-card img,.horizontal-track,.parallax-image {
+  backface-visibility:hidden;
+}
+.scroll-film-frame {
+  will-change:transform,opacity;
+  filter:saturate(.98) contrast(1.03) brightness(.76) !important;
+  clip-path:none !important;
+  transition:opacity .12s linear;
+}
+.scroll-film--property .scroll-film-frame {
+  filter:saturate(1.02) contrast(1.03) brightness(.74) !important;
+}
+.cinematic-section .container,.cinematic-section .scene-word,.cinematic-section .scene-number {
+  will-change:auto;
+}
+.image-story-bg { will-change:transform; filter:none !important; }
+.moving-card img { will-change:transform; }
+@media(prefers-reduced-motion:reduce) {
+  .scroll-film-frame,.image-story-bg,.moving-card,.moving-card img,.horizontal-track {
+    will-change:auto !important;
+  }
+}
+</style>
 </head>
 <body>
 <div id="scrollProgress"></div>
@@ -1820,17 +1845,28 @@ const DEMO_PROPERTY_PROFILES=[
 ];
 // Real stock photography from Pexels; representative images, not photos verified to belong to individual listings.
 // Real camera photographs from Pexels. These are representative stock photos, not verified photos of each listing.
+// Larger category-specific photo pools: representative stock images, not verified listing photos.
 const PLOT_IMAGES=[
 'https://images.pexels.com/photos/15422584/pexels-photo-15422584.jpeg?auto=compress&cs=tinysrgb&w=1200',
 'https://images.pexels.com/photos/27062931/pexels-photo-27062931.jpeg?auto=compress&cs=tinysrgb&w=1200',
 'https://images.pexels.com/photos/32370506/pexels-photo-32370506.jpeg?auto=compress&cs=tinysrgb&w=1200',
-'https://images.pexels.com/photos/35101084/pexels-photo-35101084.jpeg?auto=compress&cs=tinysrgb&w=1200'
+'https://images.pexels.com/photos/35101084/pexels-photo-35101084.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80',
+'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=75&sat=-10',
+'https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=1200&q=80',
+'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&w=1200&q=80'
 ];
 const HOUSE_IMAGES=[
 'https://images.pexels.com/photos/7031594/pexels-photo-7031594.jpeg?auto=compress&cs=tinysrgb&w=1200',
 'https://images.pexels.com/photos/7031595/pexels-photo-7031595.jpeg?auto=compress&cs=tinysrgb&w=1200',
 'https://images.pexels.com/photos/7031593/pexels-photo-7031593.jpeg?auto=compress&cs=tinysrgb&w=1200',
-'https://images.pexels.com/photos/5997994/pexels-photo-5997994.jpeg?auto=compress&cs=tinysrgb&w=1200'
+'https://images.pexels.com/photos/5997994/pexels-photo-5997994.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.unsplash.com/photo-1600585154340-be6161a56c0?auto=format&fit=crop&w=1200&q=80',
+'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80',
+'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1200&q=80',
+'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=1200&q=80',
+'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=80',
+'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&q=80'
 ];
 const APARTMENT_IMAGES=[
 'https://images.pexels.com/photos/35114454/pexels-photo-35114454.jpeg?auto=compress&cs=tinysrgb&w=1200',
@@ -1838,7 +1874,13 @@ const APARTMENT_IMAGES=[
 'https://images.pexels.com/photos/28304970/pexels-photo-28304970.jpeg?auto=compress&cs=tinysrgb&w=1200',
 'https://images.pexels.com/photos/9285535/pexels-photo-9285535.jpeg?auto=compress&cs=tinysrgb&w=1200',
 'https://images.pexels.com/photos/7953124/pexels-photo-7953124.jpeg?auto=compress&cs=tinysrgb&w=1200',
-'https://images.pexels.com/photos/5505128/pexels-photo-5505128.jpeg?auto=compress&cs=tinysrgb&w=1200'
+'https://images.pexels.com/photos/5505128/pexels-photo-5505128.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.unsplash.com/photo-1460317442991-0ec209397118?auto=format&fit=crop&w=1200&q=80',
+'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80',
+'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80',
+'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80',
+'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1200&q=80',
+'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&q=80'
 ];
 const VILLA_IMAGES=[
 'https://images.pexels.com/photos/7031594/pexels-photo-7031594.jpeg?auto=compress&cs=tinysrgb&w=1200',
@@ -1846,14 +1888,43 @@ const VILLA_IMAGES=[
 'https://images.pexels.com/photos/7031593/pexels-photo-7031593.jpeg?auto=compress&cs=tinysrgb&w=1200',
 'https://images.pexels.com/photos/7031595/pexels-photo-7031595.jpeg?auto=compress&cs=tinysrgb&w=1200',
 'https://images.pexels.com/photos/5997994/pexels-photo-5997994.jpeg?auto=compress&cs=tinysrgb&w=1200',
-'https://images.pexels.com/photos/7031602/pexels-photo-7031602.jpeg?auto=compress&cs=tinysrgb&w=1200'
+'https://images.pexels.com/photos/7031602/pexels-photo-7031602.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.unsplash.com/photo-1600585154340-be6161a56c0?auto=format&fit=crop&w=1200&q=80',
+'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=1200&q=80',
+'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&q=80',
+'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=80'
 ];
-function stablePropertyNumber(p){const n=Number(p?.id);if(Number.isFinite(n)&&n>0)return n;return Math.abs(String(p?.title||'property').split('').reduce((a,c)=>a+c.charCodeAt(0),0));}
-function propertyImageSetFor(p){const t=String(p?.property_type||'').toLowerCase();if(t.includes('plot')||t.includes('site')||t.includes('land'))return PLOT_IMAGES;if(t.includes('villa'))return VILLA_IMAGES;if(t.includes('apartment')||t.includes('flat'))return APARTMENT_IMAGES;return HOUSE_IMAGES;}
-function propertyGalleryFor(p){const pool=propertyImageSetFor(p);const n=stablePropertyNumber(p);const out=[];for(let i=0;i<4;i++)out.push(pool[(n+i)%pool.length]);return [...new Set(out)];}
+function stablePropertyNumber(p){
+  const n=Number(p?.id);
+  if(Number.isFinite(n)&&n>0)return n;
+  return Math.abs(String(p?.title||'property').split('').reduce((a,c)=>a*31+c.charCodeAt(0),7));
+}
+function propertyImageSetFor(p){
+  const t=String(p?.property_type||'').toLowerCase();
+  if(t.includes('plot')||t.includes('site')||t.includes('land'))return PLOT_IMAGES;
+  if(t.includes('apartment')||t.includes('flat'))return APARTMENT_IMAGES;
+  if(t.includes('villa'))return VILLA_IMAGES;
+  return HOUSE_IMAGES;
+}
+function propertyGalleryFor(p){
+  const pool=propertyImageSetFor(p);
+  const seed=stablePropertyNumber(p);
+  const startIndex=seed%pool.length;
+  const step=pool.length>1?(seed%2===0?3:5):1;
+  const out=[];
+  for(let i=0;i<Math.min(4,pool.length);i++)out.push(pool[(startIndex+i*step)%pool.length]);
+  return [...new Set(out)];
+}
 function propertyImageFor(p){return propertyGalleryFor(p)[0];}
-function imageFallbackFor(property){return propertyGalleryFor(property)[0];}
-function handlePropertyImageError(img,property){const fallback=imageFallbackFor(property);if(img.dataset.fallbackApplied==='1'){img.style.opacity='0';return;}img.dataset.fallbackApplied='1';img.src=fallback;}
+function imageFallbackFor(property){return propertyGalleryFor(property)[1]||propertyGalleryFor(property)[0];}
+function handlePropertyImageError(img,property){
+  const pool=propertyImageSetFor(property);
+  const attempted=Number(img.dataset.fallbackIndex||0);
+  if(attempted>=pool.length-1){img.style.opacity='0';return;}
+  const next=attempted+1;
+  img.dataset.fallbackIndex=String(next);
+  img.src=pool[(stablePropertyNumber(property)+next)%pool.length];
+}
 
 function ownerValue(p,key){const actual=p?.[key]??'';if(String(actual||'').trim())return String(actual).trim();const profile=DEMO_PROPERTY_PROFILES[stablePropertyNumber(p)%DEMO_PROPERTY_PROFILES.length];return key==='owner_name'?profile.name:profile.contact;}
 
@@ -1884,7 +1955,9 @@ function renderResults(){
     const img=card.querySelector('.property-photo');
     img.addEventListener('error',()=>handlePropertyImageError(img,p),{once:false});
     box.appendChild(card);
-    requestAnimationFrame(()=>setTimeout(()=>{card.style.opacity='1';card.style.transform='translateY(0)';card.style.transition='opacity .75s cubic-bezier(.16,1,.3,1),transform .75s cubic-bezier(.16,1,.3,1)'},i*45));
+    card.style.opacity='1';
+    card.style.transform='translateY(0)';
+    card.style.transition='opacity .24s ease,transform .24s ease';
   });
 }
 
@@ -2156,6 +2229,8 @@ function cinematicFrame(){
     if (fill) fill.style.width = (localProgress * 100) + '%';
   });
 
+  // Update only scroll-driven visual stories in the same animation frame.
+  updateImageStories();
   // Scrub video less frequently; tiny seeks cause visible decoder stutter.
   syncScrollVideo();
 }
