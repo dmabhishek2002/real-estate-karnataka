@@ -627,6 +627,39 @@ body{background:var(--luxury-plum);color:var(--luxury-cream)}
 .btn-ghost:hover{border-color:var(--luxury-rose)!important;color:var(--luxury-rose)!important;background:rgba(212,165,165,.08)!important}
 .nav-cta{border-color:rgba(212,165,165,.38)!important}
 .scroll-film-line span{background:linear-gradient(90deg,#2B2D42,#F8F9FA,#2B2D42)!important}
+/* Accessible light/dark theme toggle */
+.theme-toggle{display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--text);font-size:12px;cursor:pointer;white-space:nowrap;transition:background .2s,color .2s,border-color .2s}
+.theme-toggle:hover{border-color:var(--green)}
+body[data-theme="light"]{--bg:#F5F7FB;--bg2:#E9EEF5;--panel:#FFFFFF;--text:#172033;--muted:#586579;--line:rgba(23,32,51,.16);background:#F5F7FB!important;color:#172033!important}
+body[data-theme="light"] .site-nav{background:rgba(248,250,253,.94)!important;border-bottom-color:rgba(23,32,51,.12)!important;color:#172033!important}
+body[data-theme="light"] .brand,body[data-theme="light"] .nav-links a,body[data-theme="light"] .nav-cta,body[data-theme="light"] .nav-admin-link{color:#172033!important}
+body[data-theme="light"] .hero,body[data-theme="light"] .scroll-film,body[data-theme="light"] .scroll-video-section{background:#E9EEF5!important;color:#172033}
+body[data-theme="light"] .story-strip,body[data-theme="light"] .section,body[data-theme="light"] .analytics,body[data-theme="light"] .results-section{background:#F5F7FB!important;color:#172033!important}
+body[data-theme="light"] .search-wrap,body[data-theme="light"] .chart-card,body[data-theme="light"] .stat,body[data-theme="light"] .story-item,body[data-theme="light"] .search-top{background:#FFFFFF!important;color:#172033!important;border-color:#D8E0EA!important}
+body[data-theme="light"] .search-wrap p,body[data-theme="light"] .muted,body[data-theme="light"] .section-head p,body[data-theme="light"] .analytics-head p,body[data-theme="light"] .intro-copy p{color:#586579!important}
+body[data-theme="light"] .field label,body[data-theme="light"] .search-top h3,body[data-theme="light"] .chart-card h3,body[data-theme="light"] .stat small,body[data-theme="light"] .story-item small{color:#586579!important}
+body[data-theme="light"] .field input,body[data-theme="light"] .field select{background:#F8FAFD!important;color:#172033!important;border-color:#CBD5E1!important}
+body[data-theme="light"] .property-card{background:#FFFFFF!important;color:#172033!important;border-color:#D8E0EA!important;box-shadow:0 12px 32px rgba(15,23,42,.10)!important}
+body[data-theme="light"] .property-card::before,body[data-theme="light"] .property-card::after{opacity:.15!important}
+body[data-theme="light"] .property-card h3,body[data-theme="light"] .property-location,body[data-theme="light"] .property-meta,body[data-theme="light"] .property-price{color:#172033!important}
+body[data-theme="light"] .property-owner-box{background:#F8FAFD!important;border-color:#D8E0EA!important;color:#172033!important}
+body[data-theme="light"] .property-owner-box strong,body[data-theme="light"] .property-owner-box span{color:#172033!important}
+body[data-theme="light"] .property-detail-modal{background:rgba(20,30,45,.52)!important}
+body[data-theme="light"] .property-detail-panel{background:#FFFFFF!important;color:#172033!important}
+body[data-theme="light"] .property-detail-title,body[data-theme="light"] .property-detail-location,body[data-theme="light"] .property-detail-stat strong,body[data-theme="light"] .property-detail-owner-box strong{color:#172033!important}
+body[data-theme="light"] .property-detail-stat,body[data-theme="light"] .property-detail-owner-box{background:#F5F7FB!important;border-color:#D8E0EA!important}
+body[data-theme="light"] .property-detail-note{color:#586579!important}
+body[data-theme="light"] .price-table th,body[data-theme="light"] .price-table td{color:#172033!important;border-color:#D8E0EA!important}
+body[data-theme="light"] footer,body[data-theme="light"] .site-footer{background:#E9EEF5!important;color:#172033!important}
+body[data-theme="light"] .scene-word,body[data-theme="light"] .scene-number{color:rgba(23,32,51,.12)!important}
+body[data-theme="light"] .scroll-film-copy-wrap,body[data-theme="light"] .scroll-video-content{color:#fff!important}
+body[data-theme="light"] .theme-toggle{background:#fff;color:#172033;border-color:#CBD5E1}
+.plot-layout-preview{display:grid;grid-template-columns:minmax(0,1fr) 100px;gap:10px;align-items:center;margin:12px 0;padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(127,145,170,.08);color:var(--text)}
+.plot-layout-preview svg{display:block;width:100%;height:auto;max-height:106px}
+.plot-layout-copy{font-size:11px;line-height:1.55;color:var(--muted)}
+.plot-layout-copy strong{display:block;font-size:13px;color:var(--text);margin-bottom:2px}
+.plot-layout-tag{display:inline-flex;align-items:center;padding:3px 7px;border-radius:999px;background:#DDEFE3;color:#14532D;font-size:9px;font-weight:800;letter-spacing:.08em}
+@media(max-width:760px){.theme-toggle{padding:8px 10px}.theme-toggle #themeToggleLabel{display:none}.plot-layout-preview{grid-template-columns:minmax(0,1fr) 88px}}
 </style>
 
 <style id="architectural-monochrome-theme">
@@ -1563,7 +1596,7 @@ html { scroll-behavior: auto; }
 </head>
 <body>
 <div id="scrollProgress"></div>
-<header class="site-nav" id="siteNav"><div class="nav-inner"><a class="brand" href="#home"><span class="brand-mark" aria-hidden="true"><svg class="brand-abstract-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V12h4v7.5M10 19.5V8h4v11.5M16 19.5V5h4v14.5"/><path d="M4 11l4-2 4 2 7-7"/><path d="M17 4h2v2"/></svg></span><span class="brand-name"><span class="brand-part-one">REAL ESTATE</span><span class="brand-part-two">KARNATAKA</span></span></a><nav class="nav-links"><a href="#home">Home</a><a href="#search">Explore</a><a href="#analytics">Market</a><a href="#about">About</a></nav><a class="nav-cta" id="accountNavLink" href="/login">Sign in</a><button class="nav-signout" id="signOutBtn" type="button">Sign out</button><a class="nav-admin-link" href="/admin/login">Admin</a><button class="menu" id="menuBtn">Menu</button></div></header>
+<header class="site-nav" id="siteNav"><div class="nav-inner"><a class="brand" href="#home"><span class="brand-mark" aria-hidden="true"><svg class="brand-abstract-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V12h4v7.5M10 19.5V8h4v11.5M16 19.5V5h4v14.5"/><path d="M4 11l4-2 4 2 7-7"/><path d="M17 4h2v2"/></svg></span><span class="brand-name"><span class="brand-part-one">REAL ESTATE</span><span class="brand-part-two">KARNATAKA</span></span></a><nav class="nav-links"><a href="#home">Home</a><a href="#search">Explore</a><a href="#analytics">Market</a><a href="#about">About</a></nav><button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light theme" title="Switch theme"><span id="themeToggleIcon" aria-hidden="true">☀</span><span id="themeToggleLabel">Light mode</span></button><a class="nav-cta" id="accountNavLink" href="/login">Sign in</a><button class="nav-signout" id="signOutBtn" type="button">Sign out</button><a class="nav-admin-link" href="/admin/login">Admin</a><button class="menu" id="menuBtn">Menu</button></div></header>
 <main>
 <section class="hero" id="home"><div class="hero-media" id="heroMedia" data-parallax-speed="0.16"></div><div class="hero-vignette"></div><div class="hero-content"><div><div class="eyebrow">Karnataka · Property · Data</div><h1 class="hero-title display"><span class="line"><span class="word">Find where</span></span><span class="line"><span class="word">value lives.</span></span></h1></div><div class="hero-copy"><p>A cinematic property discovery and market-analysis experience for Karnataka — search, compare and understand available real-estate data in one place.</p><div class="hero-actions"><a class="btn btn-primary" href="#search">Explore Properties</a><a class="btn btn-ghost" href="#analytics">View Market</a></div></div></div><div class="scroll-cue"><span>Scroll to explore</span><i></i><span>↓</span></div></section>
 <section class="story-strip"><div class="container story-grid"><div class="story-item reveal"><strong>Karnataka-wide</strong><small>Location hierarchy</small></div><div class="story-item reveal"><strong>Search</strong><small>District to village</small></div><div class="story-item reveal"><strong>Compare</strong><small>Price · area · BHK</small></div><div class="story-item reveal"><strong>Analyze</strong><small>Market signals</small></div></div></section>
@@ -2297,6 +2330,23 @@ loadAnalytics();
 renderCompareBar();
 // Avoid eagerly decoding every cinematic frame; let the browser load images as needed.
 cinematicFrame();
+function applyTheme(theme){
+  const next=theme==='light'?'light':'dark';
+  document.body.dataset.theme=next;
+  const icon=document.getElementById('themeToggleIcon');
+  const label=document.getElementById('themeToggleLabel');
+  const button=document.getElementById('themeToggle');
+  if(icon)icon.textContent=next==='dark'?'☀':'☾';
+  if(label)label.textContent=next==='dark'?'Light mode':'Dark mode';
+  if(button)button.setAttribute('aria-label',next==='dark'?'Switch to light theme':'Switch to dark theme');
+  try{localStorage.setItem('realEstateKarnatakaTheme',next)}catch(e){}
+}
+(function initTheme(){
+  let saved='dark';
+  try{saved=localStorage.getItem('realEstateKarnatakaTheme')||'dark'}catch(e){}
+  applyTheme(saved);
+  document.getElementById('themeToggle')?.addEventListener('click',()=>applyTheme(document.body.dataset.theme==='dark'?'light':'dark'));
+})();
 </script>
 </body>
 </html>
