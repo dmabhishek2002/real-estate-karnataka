@@ -865,6 +865,31 @@ body[data-theme="dark"] .price-table th,body[data-theme="dark"] .price-table td{
 @keyframes templeHeroDrift{from{transform:scale(1.02) translate3d(-.5%,0,0)}to{transform:scale(1.10) translate3d(.5%,-1%,0)}}
 @media(prefers-reduced-motion:reduce){.hero-media,.hero::before{animation:none!important}}
 
+
+/* HERITAGE SLIDESHOW: keep the colourful animated overlay, rotate the actual Karnataka heritage scenes */
+.hero-media{background-image:linear-gradient(180deg,rgba(6,8,22,.12) 0%,rgba(6,8,22,.24) 42%,#0B0B0F 100%),linear-gradient(90deg,rgba(5,8,22,.62),rgba(5,8,22,.12) 72%,rgba(5,8,22,.3)),url('https://images.pexels.com/photos/27011317/pexels-photo-27011317.jpeg?auto=compress&cs=tinysrgb&w=2400')!important}
+.heritage-slide{
+ position:absolute;inset:0;z-index:0;opacity:0;
+ background-position:center 45%;background-size:cover;background-repeat:no-repeat;
+ transform:scale(1.06);transition:opacity 1.5s ease,transform 8s ease;
+ will-change:opacity,transform;
+}
+.heritage-slide.active{opacity:1;transform:scale(1.13)}
+.hero-media{background-image:none!important}
+.hero-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+ background:linear-gradient(180deg,rgba(6,8,22,.16),rgba(6,8,22,.22) 40%,#0B0B0F 100%),linear-gradient(90deg,rgba(5,8,22,.56),transparent 75%);
+ z-index:1}
+.heritage-caption{
+ position:absolute;right:clamp(18px,4vw,56px);bottom:clamp(95px,12vh,150px);z-index:4;
+ display:flex;align-items:center;gap:12px;color:#fff;font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+ text-shadow:0 2px 14px rgba(0,0,0,.7);pointer-events:none
+}
+.heritage-caption::before{content:"";width:34px;height:1px;background:linear-gradient(90deg,#38e7ff,#b06cff,#ff9a68)}
+.heritage-dots{display:flex;gap:7px;position:absolute;right:clamp(18px,4vw,56px);bottom:clamp(68px,8vh,100px);z-index:5}
+.heritage-dot{width:22px;height:3px;border:0;padding:0;background:rgba(255,255,255,.35);border-radius:9px;transition:width .35s,background .35s}
+.heritage-dot.active{width:42px;background:linear-gradient(90deg,#38e7ff,#a36dff,#ff9a68)}
+@media(max-width:760px){.heritage-caption{bottom:76px;left:14px;right:auto;font-size:9px}.heritage-dots{right:14px;bottom:48px}}
+
 </style>
 
 <style id="architectural-monochrome-theme">
@@ -2555,6 +2580,47 @@ function applyTheme(theme){
   applyTheme(saved);
   document.getElementById('themeToggle')?.addEventListener('click',()=>applyTheme(document.body.dataset.theme==='dark'?'light':'dark'));
 })();
+
+/* Automatic Karnataka heritage background slideshow */
+(function initHeritageSlideshow(){
+ const media=document.querySelector('.hero-media');
+ const hero=document.querySelector('.hero');
+ if(!media||!hero||media.querySelector('.heritage-slide'))return;
+ const scenes=[
+  {name:'HAMPI · VIRUPAKSHA TEMPLE',url:'https://images.pexels.com/photos/27011317/pexels-photo-27011317.jpeg?auto=compress&cs=tinysrgb&w=2400'},
+  {name:'HAMPI · TEMPLE REFLECTIONS',url:'https://images.unsplash.com/photo-1651569213732-2251882a6c96?auto=format&fit=crop&w=2400&q=85'},
+  {name:'BADAMI · CAVE TEMPLE LANDSCAPE',url:'https://commons.wikimedia.org/wiki/Special:FilePath/Agastya%20Lake%20with%20Badami%20Temples.jpg'},
+  {name:'PATTADAKAL · ANCIENT TEMPLE COMPLEX',url:'https://commons.wikimedia.org/wiki/Special:FilePath/Pattadakallu%20Temple%20complex%20full%20view.jpg'},
+  {name:'HAMPI · STONE HERITAGE',url:'https://images.unsplash.com/photo-1606293926075-69a00dbfde81?auto=format&fit=crop&w=2400&q=85'}
+ ];
+ const layers=scenes.map((scene,i)=>{
+  const layer=document.createElement('div');
+  layer.className='heritage-slide'+(i===0?' active':'');
+  layer.setAttribute('role','img');layer.setAttribute('aria-label',scene.name);
+  layer.style.backgroundImage="url("+JSON.stringify(scene.url)+")";
+  media.appendChild(layer);
+  const preload=new Image();preload.src=scene.url;
+  return layer;
+ });
+ const caption=document.createElement('div');caption.className='heritage-caption';caption.textContent=scenes[0].name;hero.appendChild(caption);
+ const dots=document.createElement('div');dots.className='heritage-dots';dots.setAttribute('aria-label','Karnataka heritage slides');
+ const buttons=scenes.map((scene,i)=>{
+  const b=document.createElement('button');b.className='heritage-dot'+(i===0?' active':'');
+  b.type='button';b.setAttribute('aria-label','Show '+scene.name);
+  b.addEventListener('click',()=>show(i,true));dots.appendChild(b);return b;
+ });
+ hero.appendChild(dots);
+ let current=0,timer;
+ function show(index,reset){
+  current=(index+scenes.length)%scenes.length;
+  layers.forEach((layer,i)=>layer.classList.toggle('active',i===current));
+  buttons.forEach((b,i)=>b.classList.toggle('active',i===current));
+  caption.textContent=scenes[current].name;
+  if(reset){clearInterval(timer);timer=setInterval(()=>show(current+1,false),6500);}
+ }
+ timer=setInterval(()=>show(current+1,false),6500);
+})();
+
 </script>
 </body>
 </html>
