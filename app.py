@@ -1,12 +1,16 @@
 from flask import Flask, render_template, jsonify, request, session, redirect
 import sqlite3
 import os
+import shutil
 from functools import wraps
 from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
 
-DATABASE = "database/realestate.db"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATABASE = os.path.join(BASE_DIR, "database", "realestate.db")
+BACKUP_DATABASE = os.path.join(BASE_DIR, "database", "realestate_backup.db")
+os.makedirs(os.path.dirname(DATABASE), exist_ok=True)
 
 # Secret key for admin login session
 app.secret_key = "realestate_admin_secret_key_2026"
@@ -33,6 +37,100 @@ def ensure_property_columns():
         connection.commit()
     finally:
         connection.close()
+
+
+def prepare_database_from_backup():
+    """
+    Recover the committed database backup on fresh Render instances and
+    restore missing location/property rows without replacing existing user data.
+    """
+    if not os.path.exists(DATABASE) and os.path.exists(BACKUP_DATABASE):
+        shutil.copy2(BACKUP_DATABASE, DATABASE)
+
+    if not os.path.exists(DATABASE) or not os.path.exists(BACKUP_DATABASE):
+        return
+
+    target = sqlite3.connect(DATABASE)
+    source = sqlite3.connect(f"file:{BACKUP_DATABASE}?mode=ro", uri=True)
+
+    try:
+        source_tables = {
+            row[0] for row in source.execute(
+                "SELECT name FROM sqlite_master WHERE type = 'table'"
+            ).fetchall()
+        }
+        target_tables = {
+            row[0] for row in target.execute(
+                "SELECT name FROM sqlite_master WHERE type = 'table'"
+            ).fetchall()
+        }
+
+        # Parent tables are restored before child tables so location IDs remain valid.
+        for table_name in ("districts", "taluks", "villages", "properties"):
+            if table_name not in source_tables:
+                continue
+
+            if table_name not in target_tables:
+                schema_row = source.execute(
+                    "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?",
+                    (table_name,)
+                ).fetchone()
+                if schema_row and schema_row[0]:
+                    target.execute(schema_row[0])
+                    target_tables.add(table_name)
+
+            if table_name not in target_tables:
+                continue
+
+            target_count = target.execute(
+                f'SELECT COUNT(*) FROM "{table_name}"'
+            ).fetchone()[0]
+            source_count = source.execute(
+                f'SELECT COUNT(*) FROM "{table_name}"'
+            ).fetchone()[0]
+
+            # Only backfill empty tables. Existing non-empty user data is preserved.
+            if target_count == 0 and source_count > 0:
+                target_columns = {
+                    row[1] for row in target.execute(
+                        f'PRAGMA table_info("{table_name}")'
+                    ).fetchall()
+                }
+                source_columns = {
+                    row[1] for row in source.execute(
+                        f'PRAGMA table_info("{table_name}")'
+                    ).fetchall()
+                }
+                common_columns = [
+                    name for name in target_columns if name in source_columns
+                ]
+                if common_columns:
+                    column_sql = ", ".join(f'"{name}"' for name in common_columns)
+                    target.execute(
+                        f'INSERT OR IGNORE INTO "{table_name}" ({column_sql}) '
+                        f'SELECT {column_sql} FROM backup_db_placeholder'
+                    ) if False else None
+                    # SQLite cannot SELECT across separate connections directly,
+                    # so copy rows using the shared column list.
+                    rows = source.execute(
+                        f'SELECT {column_sql} FROM "{table_name}"'
+                    ).fetchall()
+                    if rows:
+                        placeholders = ", ".join("?" for _ in common_columns)
+                        target.executemany(
+                            f'INSERT OR IGNORE INTO "{table_name}" ({column_sql}) '
+                            f'VALUES ({placeholders})',
+                            rows
+                        )
+
+        target.commit()
+    finally:
+        source.close()
+        target.close()
+
+
+# Restore the location/property database before schema migrations run.
+prepare_database_from_backup()
 
 
 # Make the existing database compatible with owner/contact fields.
@@ -313,8 +411,75 @@ def ensure_multiple_houses_for_every_village():
         connection.close()
 
 
+def ensure_plot_for_every_village():
+    """Add one clearly illustrative plot entry for each village missing one."""
+    connection = get_db_connection()
+    try:
+        villages = connection.execute(
+            """
+            SELECT v.id AS village_id, v.name AS village_name,
+                   t.id AS taluk_id, t.name AS taluk_name,
+                   d.id AS district_id, d.name AS district_name
+            FROM villages v
+            JOIN taluks t ON v.taluk_id = t.id
+            JOIN districts d ON t.district_id = d.id
+            ORDER BY v.id
+            """
+        ).fetchall()
+
+        existing_rows = connection.execute(
+            """
+            SELECT village_id, COUNT(*) AS plot_count
+            FROM properties
+            WHERE LOWER(TRIM(COALESCE(property_type, ''))) IN ('plot', 'site', 'land')
+              AND village_id IS NOT NULL
+            GROUP BY village_id
+            """
+        ).fetchall()
+        plot_counts = {row["village_id"]: int(row["plot_count"] or 0) for row in existing_rows}
+        inserts = []
+
+        for village in villages:
+            if plot_counts.get(village["village_id"], 0) > 0:
+                continue
+
+            seed_number = int(village["village_id"])
+            area = 1200 + ((seed_number * 97) % 2400)
+            price_per_sqft = 700 + ((int(village["district_id"]) * 113) % 900)
+            price = int(round((area * price_per_sqft) / 50000) * 50000)
+            title = f"Residential Plot – {village['village_name']}"
+            description = (
+                f"Illustrative project inventory entry for {village['village_name']}, "
+                f"{village['taluk_name']}, {village['district_name']}. "
+                "Price and availability are sample values for demonstration and must "
+                "be verified independently before any purchase."
+            )
+            inserts.append((
+                village["district_id"], village["taluk_id"], village["village_id"],
+                "Plot", None, title, area, price, price_per_sqft, description,
+                "Illustrative Karnataka inventory", None, None
+            ))
+
+        if inserts:
+            connection.executemany(
+                """
+                INSERT INTO properties (
+                    district_id, taluk_id, village_id, property_type, bhk, title,
+                    area_sqft, price, price_per_sqft, description, source,
+                    owner_name, owner_contact
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                inserts
+            )
+            connection.commit()
+            print(f"Added {len(inserts):,} illustrative plot entries across Karnataka villages.")
+    finally:
+        connection.close()
+
+
 ensure_optional_property_columns()
 ensure_multiple_houses_for_every_village()
+ensure_plot_for_every_village()
 
 
 def clean_listing_text():
@@ -902,8 +1067,8 @@ def add_property():
 # ============================================================
 
 @app.route("/api/properties", methods=["GET"])
-@user_or_admin_required
 def get_properties():
+    # Property browsing/search is public; only property creation and admin actions require login.
 
     district_id = request.args.get("district")
     taluk_id = request.args.get("taluk")
