@@ -1705,15 +1705,7 @@ function updateBhkControl(){const select=$('bhk');const isPlot=plotSearchSelecte
 function makeQuery(extra={}){const p=new URLSearchParams();const f={district:$('district').value,taluk:$('taluk').value,village:$('village').value,propertyType:$('propertyType').value,bhk:plotSearchSelected()?'':$('bhk').value,budget:$('budget').value,...extra};Object.entries(f).forEach(([k,v])=>{if(v!==''&&v!=null)p.set(k,v)});return p}
 function normalize(data){if(Array.isArray(data))return{results:data,pagination:{page:1,page_size:data.length,total:data.length,total_pages:1},analytics:null};return{results:Array.isArray(data.results)?data.results:[],pagination:data.pagination||{page:1,total:0,total_pages:1},analytics:data.analytics||null}}
 async function search(page=1){
-  const auth=await getUserSession();
-  if(!auth.authenticated){
-    state.properties=[];
-    state.total=0;
-    state.totalPages=1;
-    $('results').classList.remove('visible');
-    window.location.href='/login?next='+encodeURIComponent('/#search');
-    return;
-  }
+  // Browsing and filtering property listings is available without signing in.
   const b=$('searchButton');
   b.disabled=true;
   const label=b.querySelector('span');
