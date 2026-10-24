@@ -1795,10 +1795,6 @@ async function search(page=1){
     state.totalPages=1;
     state.page=1;
     $('results').classList.remove('visible');
-    if(String(e.message).includes('401')){
-      window.location.href='/login?next='+encodeURIComponent('/#search');
-      return;
-    }
     renderResults();
     $('results').classList.add('visible');
     $('resultCount').textContent='Unable to load properties — check Flask console';
