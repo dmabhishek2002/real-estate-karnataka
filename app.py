@@ -440,7 +440,8 @@ def ensure_plot_for_every_village():
                 continue
 
             seed_number = int(village["village_id"])
-            area = 1200 + ((seed_number * 97) % 2400)
+            standard_plot_areas = [1200, 1500, 1800, 2400, 3000, 4000]
+            area = standard_plot_areas[seed_number % len(standard_plot_areas)]
             price_per_sqft = 700 + ((int(village["district_id"]) * 113) % 900)
             price = int(round((area * price_per_sqft) / 50000) * 50000)
             title = f"Residential Plot – {village['village_name']}"
@@ -469,6 +470,39 @@ def ensure_plot_for_every_village():
             )
             connection.commit()
             print(f"Added {len(inserts):,} illustrative plot entries across Karnataka villages.")
+    finally:
+        connection.close()
+
+
+
+def normalize_illustrative_plot_sizes():
+    """Use common residential site areas for generated demo plots only."""
+    connection = get_db_connection()
+    try:
+        standard_plot_areas = [1200, 1500, 1800, 2400, 3000, 4000]
+        rows = connection.execute(
+            """
+            SELECT id, area_sqft, price_per_sqft
+            FROM properties
+            WHERE LOWER(TRIM(COALESCE(property_type, ''))) IN ('plot', 'site', 'land')
+              AND source = 'Illustrative Karnataka inventory'
+            ORDER BY id
+            """
+        ).fetchall()
+        changed = 0
+        for row in rows:
+            area = standard_plot_areas[int(row["id"]) % len(standard_plot_areas)]
+            pps = int(row["price_per_sqft"] or 0)
+            price = int(round((area * pps) / 50000) * 50000) if pps else 0
+            if int(row["area_sqft"] or 0) != area:
+                connection.execute(
+                    "UPDATE properties SET area_sqft = ?, price = ? WHERE id = ?",
+                    (area, price, row["id"])
+                )
+                changed += 1
+        if changed:
+            connection.commit()
+            print(f"Standardized {changed:,} illustrative plot sizes.")
     finally:
         connection.close()
 
@@ -558,6 +592,7 @@ def ensure_apartment_for_every_taluk():
 ensure_optional_property_columns()
 ensure_multiple_houses_for_every_village()
 ensure_plot_for_every_village()
+normalize_illustrative_plot_sizes()
 ensure_apartment_for_every_taluk()
 
 
