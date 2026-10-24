@@ -1502,6 +1502,35 @@ footer{
 .footer-contact{margin-top:6px!important;color:#D9CBD0!important;font-size:10px!important;line-height:1.7!important}
 </style>
 
+<style id="scroll-performance-fix">
+/* Performance patch: reduce GPU memory pressure and expensive paint effects. */
+html { scroll-behavior: auto; }
+.scroll-film-frame {
+  filter: none !important;
+  clip-path: none !important;
+  transition: none !important;
+  will-change: opacity, transform !important;
+  backface-visibility: hidden;
+}
+.horizontal-panel img,
+.moving-card,
+.moving-card img {
+  will-change: auto !important;
+}
+.property-owner-box,
+.view-details-button {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
 </head>
 <body>
 <div id="scrollProgress"></div>
@@ -1926,7 +1955,7 @@ function syncScrollVideo(){
   const local=clamp(-r.top/travel,0,1);
   const eased=local*local*(3-2*local);
   const target=eased*videoDuration;
-  if(Math.abs(target-lastVideoTime)>0.012){
+  if(Math.abs(target-lastVideoTime)>0.08){
     try{scrollVideo.currentTime=target;lastVideoTime=target}catch(e){}
   }
   if(videoProgressFill) videoProgressFill.style.height=(local*100)+'%';
@@ -2089,91 +2118,66 @@ function updateScrollFilms(){
 
 
 function cinematicFrame(){
-  smoothScrollY += (scrollTarget - smoothScrollY) * 0.075;
+  // Use the browser's real scroll position. Do not interpolate scrollY:
+  // the old custom easing loop caused the page to lag behind the mouse wheel.
+  rafRunning = false;
+  const y = window.scrollY || window.pageYOffset || 0;
+  const docHeight = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+  const progress = clamp(y / docHeight, 0, 1);
 
-  syncScrollVideo();
-  updateImageStories();
-  updateScrollFilms();
+  const progressBar = $('scrollProgress');
+  if (progressBar) progressBar.style.width = (progress * 100) + '%';
+  const nav = $('siteNav');
+  if (nav) nav.classList.toggle('scrolled', y > 30);
 
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  const progress = docHeight > 0 ? smoothScrollY / docHeight : 0;
-
-  $('scrollProgress').style.width = (progress * 100) + '%';
-  $('siteNav').classList.toggle('scrolled', smoothScrollY > 30);
-
-  const hero = document.querySelector('.hero');
-  const heroMedia = $('heroMedia');
-
-  if(hero && heroMedia){
-    const heroRatio = clamp(smoothScrollY / Math.max(hero.offsetHeight,1), 0, 1.2);
-    heroMedia.style.transform = `translate3d(0,${smoothScrollY * 0.14}px,0) scale(${1.05 + heroRatio * 0.085})`;
-    heroMedia.style.filter = `saturate(${1.08 + heroRatio * .08}) contrast(${1.05 + heroRatio * .03}) brightness(${.9 - heroRatio * .06})`;
-  }
-
-  document.querySelectorAll('.cinematic-section').forEach(section => {
+  // Keep scroll-film transitions lightweight: update only the two nearby
+  // frames, and avoid per-frame blur, clip-path and filter recalculation.
+  document.querySelectorAll('[data-scroll-film]').forEach(section => {
     const rect = section.getBoundingClientRect();
-    const vh = window.innerHeight;
-    const center = rect.top + rect.height / 2;
-    const distance = (center - vh / 2) / (vh + rect.height);
-    const p = clamp(distance, -1, 1);
-    const lift = -p * 28;
-    const scale = 1 - Math.abs(p) * 0.018;
-    const opacity = .78 + (1 - Math.abs(p)) * .22;
+    const travel = Math.max(section.offsetHeight - window.innerHeight, 1);
+    const localProgress = clamp(-rect.top / travel, 0, 1);
+    const frames = section.querySelectorAll('[data-film-frame]');
+    const copies = section.querySelectorAll('[data-film-copy]');
+    if (!frames.length) return;
 
-    const content = section.querySelector('.container');
-    if(content){
-      content.style.transform = `translate3d(0,${lift}px,0) scale(${scale})`;
-      content.style.opacity = opacity;
-    }
+    const filmPos = localProgress * Math.max(frames.length - 1, 0);
+    const active = Math.min(Math.floor(filmPos), frames.length - 1);
+    const fraction = filmPos - active;
 
-    const word = section.querySelector('.scene-word');
-    if(word){
-      word.style.transform = `translate3d(${p * 80}px,${p * -28}px,0)`;
-      word.style.opacity = String(.35 + (1 - Math.abs(p)) * .45);
-    }
+    frames.forEach((frame, i) => {
+      if (i === active || i === active + 1) {
+        frame.style.zIndex = i === active + 1 ? '121' : '120';
+        frame.style.opacity = i === active ? String(1 - fraction) : String(fraction);
+        frame.style.transform = 'scale(1.04) translate3d(0,0,0)';
+      } else {
+        frame.style.opacity = '0';
+      }
+    });
 
-    const number = section.querySelector('.scene-number');
-    if(number){
-      number.style.transform = `translate3d(0,${p * -18}px,0)`;
-      number.style.opacity = String(.2 + (1 - Math.abs(p)) * .75);
-    }
+    copies.forEach((copy, i) => {
+      const distance = Math.abs(filmPos - i);
+      copy.style.opacity = String(clamp(1 - distance, 0, 1));
+      copy.style.transform = 'translate3d(0,-50%,0)';
+    });
+
+    const indexEl = section.querySelector('[data-film-index]');
+    const fill = section.querySelector('[data-film-fill]');
+    if (indexEl) indexEl.textContent = String(active + 1).padStart(2, '0');
+    if (fill) fill.style.width = (localProgress * 100) + '%';
   });
 
-  const parallax = document.querySelector('.parallax-image');
-  const banner = document.querySelector('.parallax-banner');
-  if(parallax && banner){
-    const r = banner.getBoundingClientRect();
-    const p = clamp((r.top + r.height / 2 - window.innerHeight / 2) / (window.innerHeight + r.height), -1, 1);
-    parallax.style.transform = `translate3d(0,${p * -110}px,0) scale(1.12)`;
-    parallax.style.filter = `saturate(${1.05 + (1-Math.abs(p))*.12}) contrast(1.04) brightness(${.82 + (1-Math.abs(p))*.10})`;
-  }
-
-  const story = document.querySelector('.story-strip');
-  if(story){
-    const sr = story.getBoundingClientRect();
-    const sp = clamp(1 - Math.abs((sr.top + sr.height/2 - window.innerHeight/2)/(window.innerHeight + sr.height)), 0, 1);
-    story.style.setProperty('--story-glow', sp.toFixed(3));
-  }
-
-  if(Math.abs(scrollTarget - smoothScrollY) > 0.4 || rafRunning){
-    requestAnimationFrame(cinematicFrame);
-  } else {
-    rafRunning = false;
-  }
+  // Scrub video less frequently; tiny seeks cause visible decoder stutter.
+  syncScrollVideo();
 }
 
 function requestCinematicFrame(){
-  if(!rafRunning){
+  if (!rafRunning) {
     rafRunning = true;
     requestAnimationFrame(cinematicFrame);
   }
 }
 
-window.addEventListener('scroll', () => {
-  scrollTarget = window.scrollY;
-  requestCinematicFrame();
-}, {passive:true});
-
+window.addEventListener('scroll', requestCinematicFrame, { passive: true });
 window.addEventListener('resize', requestCinematicFrame);
 
 /* smooth anchor navigation */
@@ -2223,7 +2227,7 @@ loadDistricts();
 refreshAccountNav();
 loadAnalytics();
 renderCompareBar();
-preloadFilmImages();
+// Avoid eagerly decoding every cinematic frame; let the browser load images as needed.
 cinematicFrame();
 </script>
 </body>
