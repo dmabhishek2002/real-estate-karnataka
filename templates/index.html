@@ -890,6 +890,28 @@ body[data-theme="dark"] .price-table th,body[data-theme="dark"] .price-table td{
 .heritage-dot.active{width:42px;background:linear-gradient(90deg,#38e7ff,#a36dff,#ff9a68)}
 @media(max-width:760px){.heritage-caption{bottom:76px;left:14px;right:auto;font-size:9px}.heritage-dots{right:14px;bottom:48px}}
 
+
+.buyer-tools{padding:100px 0;background:linear-gradient(135deg,#10102b,#101923 55%,#24152a);position:relative;overflow:hidden}
+.buyer-tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.buyer-tool-card{border:1px solid rgba(255,255,255,.13);border-radius:24px;padding:clamp(22px,3vw,34px);background:rgba(8,12,28,.68)}
+.buyer-tool-card h3{font-size:clamp(25px,3vw,36px);margin:8px 0 10px}
+.buyer-tool-card p{color:#b8c3d8;font-size:13px;line-height:1.75}
+.emi-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+.emi-fields label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#9eacc7;margin-bottom:8px}
+.emi-fields input{width:100%;border:1px solid rgba(255,255,255,.15);background:#0c1225;color:#fff;padding:12px;border-radius:10px}
+.emi-result{margin-top:20px;padding:20px;border-radius:16px;background:linear-gradient(110deg,rgba(69,217,255,.12),rgba(164,105,255,.13),rgba(255,154,104,.1));border:1px solid rgba(120,220,255,.2)}
+.emi-result small{color:#b8c3d8;font-size:10px;text-transform:uppercase;letter-spacing:.14em}
+.emi-result strong{display:block;font-size:clamp(27px,3vw,40px);margin:8px 0}
+.emi-breakdown{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#c2cce0;font-size:11px}
+.saved-tools-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:22px}
+.saved-tool-list{display:grid;gap:10px;margin-top:16px}
+.saved-tool-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px;border:1px solid rgba(255,255,255,.1);border-radius:12px;color:#f8f9ff;font-size:12px}
+.saved-tool-item span{color:#9facc4;font-size:11px}
+.saved-property-button{border:1px solid rgba(255,255,255,.28);background:rgba(5,10,25,.3);color:#fff;border-radius:999px;padding:9px 12px;font-size:9px;letter-spacing:.08em;text-transform:uppercase;margin-right:6px}
+.saved-property-button.saved{background:linear-gradient(110deg,#45d9ff,#a36dff);border-color:transparent;color:#091020}
+.saved-tool-empty{color:#9facc4;font-size:12px;padding:14px 0}
+@media(max-width:760px){.buyer-tools-grid{grid-template-columns:1fr}.emi-fields{grid-template-columns:1fr}}
+
 </style>
 
 <style id="architectural-monochrome-theme">
@@ -1965,6 +1987,20 @@ html { scroll-behavior: auto; }
 
 <section class="section cinematic-section" id="about"><div class="container about-grid"><div class="reveal"><div class="eyebrow">05 / ABOUT</div><h2 class="display" style="margin-top:14px">Built for<br>better decisions.</h2></div><div class="about-copy reveal"><p>Real Estate Market Analysis and Decision Support System is a Karnataka-focused web application for organizing, searching and analyzing available property information.</p><p>The project combines Flask, SQLite, JavaScript and data-analysis views to support location-based filtering, budget search, comparison and market insights.</p><div class="about-list"><div class="about-point"><span>01</span><strong>Location hierarchy</strong></div><div class="about-point"><span>02</span><strong>Property search</strong></div><div class="about-point"><span>03</span><strong>Price &amp; BHK analytics</strong></div><div class="about-point"><span>04</span><strong>Property comparison</strong></div></div></div></div></section>
 </main>
+
+<section class="buyer-tools" id="buyerTools"><div class="container">
+<div class="eyebrow">Useful tools for buyers</div><div class="buyer-tools-grid" style="margin-top:18px">
+<div class="buyer-tool-card"><div class="eyebrow">Plan your budget</div><h3>Home Loan EMI Calculator</h3><p>Estimate monthly loan payments before choosing a property. This is an estimate, not a bank quote.</p>
+<div class="emi-fields">
+<div><label for="emiPrice">Property price (₹)</label><input id="emiPrice" type="number" min="1" step="50000" value="5000000"></div>
+<div><label for="emiDown">Down payment (%)</label><input id="emiDown" type="number" min="0" max="100" step="1" value="20"></div>
+<div><label for="emiRate">Annual interest (%)</label><input id="emiRate" type="number" min="0" max="30" step=".1" value="8.5"></div>
+<div><label for="emiYears">Loan tenure (years)</label><input id="emiYears" type="number" min="1" max="40" step="1" value="20"></div></div>
+<div class="emi-result"><small>Estimated monthly EMI</small><strong id="emiMonthly">₹34,679</strong><div class="emi-breakdown"><span>Loan amount: <b id="emiLoan">₹40,00,000</b></span><span>Total interest: <b id="emiInterest">₹43,23,000</b></span></div></div></div>
+<div class="buyer-tool-card"><div class="eyebrow">Keep track of options</div><h3>Your Saved Properties</h3><p>Save listings to revisit them later. Your saved list stays in this browser on this device.</p>
+<div class="saved-tools-head"><span id="savedPropertyCount">0 properties saved</span><button class="compare-button" type="button" id="clearSavedProperties">Clear saved</button></div>
+<div id="savedPropertyList" class="saved-tool-list"><div class="saved-tool-empty">Use “Save Property” on a listing to add it here.</div></div></div>
+</div></div></section>
 <footer>
   <div class="container footer">
     <div>
@@ -2216,7 +2252,7 @@ function renderResults(){
     const ownerContact=ownerValue(p,'owner_contact');
     const image=propertyImageFor(p);
     card.dataset.propertyId=id;
-    card.innerHTML=`<div class="property-media"><img class="property-photo" src="${image}" alt="Representative ${escapeHTML(p.property_type||'property')} stock photo" loading="lazy" decoding="async"><span class="photo-reference-tag">Reference photo</span></div><span class="property-index">${String(i+1).padStart(2,'0')}</span><span class="property-type">${escapeHTML(p.property_type||'Property')}</span><div><h3>${escapeHTML(title||'Property')}</h3><div class="property-location">${escapeHTML(p.village||'—')} · ${escapeHTML(p.taluk||'—')} · ${escapeHTML(p.district||'Karnataka')}</div>${plot?plotLayoutPreview(p)+plotPhotoStrip(p):''}<div class="property-meta"><span>${p.area_sqft?num(p.area_sqft)+' sqft':'—'}</span>${bhkMarkup}<span>${p.price_per_sqft?'₹'+num(p.price_per_sqft)+' / sqft':'₹ / sqft —'}</span></div><div class="property-price"><strong>${money(p.price)}</strong></div><div class="property-owner-grid"><div class="property-owner-box"><strong>Owner name</strong><span>${escapeHTML(ownerName)}</span></div><div class="property-owner-box"><strong>Contact</strong><span>${escapeHTML(ownerContact)}</span></div></div><div class="property-actions"><button class="view-details-button" type="button" onclick="event.stopPropagation();openPropertyDetails(${id})">View Details</button><button class="compare-button" type="button" onclick="event.stopPropagation();toggleCompare(${id},this)">Add to Compare</button></div></div>`;
+    card.innerHTML=`<div class="property-media"><img class="property-photo" src="${image}" alt="Representative ${escapeHTML(p.property_type||'property')} stock photo" loading="lazy" decoding="async"><span class="photo-reference-tag">Reference photo</span></div><span class="property-index">${String(i+1).padStart(2,'0')}</span><span class="property-type">${escapeHTML(p.property_type||'Property')}</span><div><h3>${escapeHTML(title||'Property')}</h3><div class="property-location">${escapeHTML(p.village||'—')} · ${escapeHTML(p.taluk||'—')} · ${escapeHTML(p.district||'Karnataka')}</div>${plot?plotLayoutPreview(p)+plotPhotoStrip(p):''}<div class="property-meta"><span>${p.area_sqft?num(p.area_sqft)+' sqft':'—'}</span>${bhkMarkup}<span>${p.price_per_sqft?'₹'+num(p.price_per_sqft)+' / sqft':'₹ / sqft —'}</span></div><div class="property-price"><strong>${money(p.price)}</strong></div><div class="property-owner-grid"><div class="property-owner-box"><strong>Owner name</strong><span>${escapeHTML(ownerName)}</span></div><div class="property-owner-box"><strong>Contact</strong><span>${escapeHTML(ownerContact)}</span></div></div><div class="property-actions"><button class="view-details-button" type="button" onclick="event.stopPropagation();openPropertyDetails(${id})">View Details</button><button class="compare-button" type="button" onclick="event.stopPropagation();toggleCompare(${id},this)">Add to Compare</button><button class="saved-property-button" type="button" data-save-property="${id}" onclick="event.stopPropagation();toggleSavedProperty(${id})">♡ Save Property</button></div></div>`;
     card.addEventListener('click',e=>{if(e.target.closest('button'))return;openPropertyDetails(id);});
     const img=card.querySelector('.property-photo');
     img.addEventListener('error',()=>handlePropertyImageError(img,p),{once:false});
@@ -2620,6 +2656,37 @@ function applyTheme(theme){
  }
  timer=setInterval(()=>show(current+1,false),6500);
 })();
+
+
+const SAVED_PROPERTY_KEY='rek_saved_property_ids_v1';
+function getSavedPropertyIds(){try{return JSON.parse(localStorage.getItem(SAVED_PROPERTY_KEY)||'[]').map(Number).filter(Number.isFinite)}catch(e){return[]}}
+function saveSavedPropertyIds(ids){try{localStorage.setItem(SAVED_PROPERTY_KEY,JSON.stringify([...new Set(ids)]))}catch(e){}}
+function toggleSavedProperty(id){let ids=getSavedPropertyIds();if(ids.includes(Number(id)))ids=ids.filter(x=>x!==Number(id));else ids.push(Number(id));saveSavedPropertyIds(ids);refreshSavedPropertyUI()}
+function refreshSavedPropertyUI(){
+ const ids=getSavedPropertyIds();
+ document.querySelectorAll('[data-save-property]').forEach(button=>{const saved=ids.includes(Number(button.dataset.saveProperty));button.classList.toggle('saved',saved);button.textContent=saved?'♥ Saved':'♡ Save Property'});
+ const count=document.getElementById('savedPropertyCount'),list=document.getElementById('savedPropertyList');
+ if(count)count.textContent=ids.length+' '+(ids.length===1?'property':'properties')+' saved';
+ if(!list)return;
+ const byId=new Map((state.properties||[]).map(p=>[Number(p.id),p]));
+ const available=ids.map(id=>byId.get(id)).filter(Boolean);
+ if(!available.length){list.innerHTML=ids.length?'<div class="saved-tool-empty">Saved properties are stored in this browser. Run a search to load their details.</div>':'<div class="saved-tool-empty">Use “Save Property” on a listing to add it here.</div>';return}
+ list.innerHTML=available.map(p=>'<div class="saved-tool-item"><div>'+escapeHTML(p.title||'Property')+'<br><span>'+escapeHTML([p.village,p.taluk,p.district].filter(Boolean).join(' · '))+'</span></div><div><b>'+money(p.price)+'</b> <button class="compare-button" type="button" onclick="openPropertyDetails('+Number(p.id)+')">View</button></div></div>').join('');
+}
+function calculateHomeLoanEMI(){
+ const price=Math.max(0,Number(document.getElementById('emiPrice')?.value)||0);
+ const downPct=Math.min(100,Math.max(0,Number(document.getElementById('emiDown')?.value)||0));
+ const rate=Math.min(30,Math.max(0,Number(document.getElementById('emiRate')?.value)||0));
+ const years=Math.min(40,Math.max(1,Number(document.getElementById('emiYears')?.value)||1));
+ const principal=price*(1-downPct/100),months=years*12,r=rate/1200;
+ const emi=principal===0?0:r===0?principal/months:principal*r*Math.pow(1+r,months)/(Math.pow(1+r,months)-1);
+ const total=emi*months,fmt=n=>'₹'+Math.round(n).toLocaleString('en-IN');
+ const m=document.getElementById('emiMonthly'),l=document.getElementById('emiLoan'),interest=document.getElementById('emiInterest');
+ if(m)m.textContent=fmt(emi);if(l)l.textContent=fmt(principal);if(interest)interest.textContent=fmt(Math.max(0,total-principal));
+}
+['emiPrice','emiDown','emiRate','emiYears'].forEach(id=>document.getElementById(id)?.addEventListener('input',calculateHomeLoanEMI));
+document.getElementById('clearSavedProperties')?.addEventListener('click',()=>{saveSavedPropertyIds([]);refreshSavedPropertyUI()});
+calculateHomeLoanEMI();refreshSavedPropertyUI();
 
 </script>
 </body>
