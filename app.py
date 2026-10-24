@@ -457,16 +457,17 @@ def user_register_api():
                 "message": "An account with this email already exists."
             }), 409
 
-        existing_phone = connection.execute(
-            "SELECT id FROM users WHERE phone = ?",
-            (phone,)
-        ).fetchone()
+        if phone:
+            existing_phone = connection.execute(
+                "SELECT id FROM users WHERE phone = ?",
+                (phone,)
+            ).fetchone()
 
-        if existing_phone:
-            return jsonify({
-                "success": False,
-                "message": "An account with this phone number already exists."
-            }), 409
+            if existing_phone:
+                return jsonify({
+                    "success": False,
+                    "message": "An account with this phone number already exists."
+                }), 409
 
         cursor = connection.execute(
             """
