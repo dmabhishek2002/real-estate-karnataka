@@ -699,7 +699,7 @@ body::before{z-index:-1;background:
 .hero-media{inset:-4%;background:
  linear-gradient(90deg,rgba(5,22,51,.88) 0%,rgba(5,22,51,.58) 42%,rgba(5,22,51,.08) 100%),
  linear-gradient(180deg,rgba(5,22,51,.05),rgba(5,22,51,.28)),
- url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2400&q=88') center/cover;animation:heroDrift 22s ease-in-out infinite alternate}
+ url('https://images.unsplash.com/photo-1738557502649-4d3de4258836?auto=format&fit=crop&fm=jpg&q=88&w=2400') center 42%/cover;animation:heroDrift 22s ease-in-out infinite alternate}
 .hero-vignette{background:radial-gradient(circle at 75% 30%,transparent 0 22%,rgba(5,22,51,.08) 66%,rgba(5,22,51,.28) 100%)}
 .hero-content{grid-template-columns:minmax(0,1.3fr) minmax(260px,.65fr);gap:38px;align-items:center}
 .hero-title{font-family:'DM Sans',sans-serif;font-size:clamp(54px,7vw,100px);line-height:.96;letter-spacing:-.065em;max-width:850px;text-wrap:balance}
@@ -798,6 +798,27 @@ body[data-theme="dark"] .price-table th,body[data-theme="dark"] .price-table td{
  body[data-theme="dark"] .nav-links{background:#122747;border-color:#29446d}
 }
 @media(prefers-reduced-motion:reduce){.hero-media{animation:none}}
+
+
+/* Temple-led hero and animated mixed-colour aurora, matching the FIRST approved mockup */
+.hero-media{
+ background-image:
+  linear-gradient(90deg,rgba(5,17,43,.78) 0%,rgba(5,17,43,.43) 44%,rgba(5,17,43,.12) 100%),
+  linear-gradient(180deg,rgba(13,24,57,.04),rgba(5,17,43,.54)),
+  url('https://images.unsplash.com/photo-1738557502649-4d3de4258836?auto=format&fit=crop&fm=jpg&q=88&w=2400');
+ background-position:center,center,center 42%;
+ background-size:cover,cover,cover;
+}
+.hero::after{
+ content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
+ background:linear-gradient(115deg,rgba(20,201,181,.18),transparent 32%,rgba(117,75,255,.22) 68%,rgba(255,144,75,.17));
+ background-size:220% 220%;
+ animation:templeAurora 13s ease-in-out infinite alternate;
+ mix-blend-mode:screen;
+}
+.hero-content{z-index:3}
+@keyframes templeAurora{0%{background-position:0% 45%;opacity:.45}50%{background-position:100% 55%;opacity:.85}100%{background-position:35% 100%;opacity:.58}}
+@media(prefers-reduced-motion:reduce){.hero::after{animation:none}}
 
 </style>
 
