@@ -1831,33 +1831,34 @@ const DEMO_PROPERTY_PROFILES=[
 {name:'Suresh Nayak',contact:'+91 90000 11012'}
 ];
 // Real stock photography from Pexels; representative images, not photos verified to belong to individual listings.
+// Real camera photographs from Pexels. These are representative stock photos, not verified photos of each listing.
 const PLOT_IMAGES=[
-'https://images.pexels.com/photos/15422584/pexels-photo-15422584.jpeg?auto=compress&cs=tinysrgb&w=1400',
-'https://images.pexels.com/photos/27062931/pexels-photo-27062931.jpeg?auto=compress&cs=tinysrgb&w=1400',
-'https://images.pexels.com/photos/32370506/pexels-photo-32370506.jpeg?auto=compress&cs=tinysrgb&w=1400',
-'https://images.pexels.com/photos/35101084/pexels-photo-35101084.jpeg?auto=compress&cs=tinysrgb&w=1400'
+'https://images.pexels.com/photos/15422584/pexels-photo-15422584.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/27062931/pexels-photo-27062931.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/32370506/pexels-photo-32370506.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/35101084/pexels-photo-35101084.jpeg?auto=compress&cs=tinysrgb&w=1200'
 ];
 const HOUSE_IMAGES=[
-'https://images.pexels.com/photos/7031594/pexels-photo-7031594.jpeg?auto=compress&cs=tinysrgb&w=1400',
-'https://images.pexels.com/photos/7031595/pexels-photo-7031595.jpeg?auto=compress&cs=tinysrgb&w=1400',
-'https://images.pexels.com/photos/7031593/pexels-photo-7031593.jpeg?auto=compress&cs=tinysrgb&w=1400',
-'https://images.pexels.com/photos/5997994/pexels-photo-5997994.jpeg?auto=compress&cs=tinysrgb&w=1400'
+'https://images.pexels.com/photos/7031594/pexels-photo-7031594.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/7031595/pexels-photo-7031595.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/7031593/pexels-photo-7031593.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/5997994/pexels-photo-5997994.jpeg?auto=compress&cs=tinysrgb&w=1200'
 ];
 const APARTMENT_IMAGES=[
-'https://images.pexels.com/photos/36392046/pexels-photo-36392046.jpeg?auto=compress&cs=tinysrgb&w=1400',
-'https://images.pexels.com/photos/27085225/pexels-photo-27085225.jpeg?auto=compress&cs=tinysrgb&w=1400',
-'https://images.pexels.com/photos/16072809/pexels-photo-16072809.jpeg?auto=compress&cs=tinysrgb&w=1400',
-'https://images.pexels.com/photos/10902419/pexels-photo-10902419.jpeg?auto=compress&cs=tinysrgb&w=1400',
-'https://images.pexels.com/photos/30407482/pexels-photo-30407482.jpeg?auto=compress&cs=tinysrgb&w=1400',
-'https://images.pexels.com/photos/18527678/pexels-photo-18527678.jpeg?auto=compress&cs=tinysrgb&w=1400'
+'https://images.pexels.com/photos/35114454/pexels-photo-35114454.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/7672058/pexels-photo-7672058.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/28304970/pexels-photo-28304970.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/9285535/pexels-photo-9285535.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/7953124/pexels-photo-7953124.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/5505128/pexels-photo-5505128.jpeg?auto=compress&cs=tinysrgb&w=1200'
 ];
 const VILLA_IMAGES=[
-'https://images.pexels.com/photos/31737842/pexels-photo-31737842.jpeg?auto=compress&cs=tinysrgb&w=1400',
-'https://images.pexels.com/photos/5997994/pexels-photo-5997994.jpeg?auto=compress&cs=tinysrgb&w=1400',
-'https://images.pexels.com/photos/7031593/pexels-photo-7031593.jpeg?auto=compress&cs=tinysrgb&w=1400',
-'https://images.pexels.com/photos/7031594/pexels-photo-7031594.jpeg?auto=compress&cs=tinysrgb&w=1400',
-'https://images.pexels.com/photos/7031595/pexels-photo-7031595.jpeg?auto=compress&cs=tinysrgb&w=1400',
-'https://images.pexels.com/photos/7031602/pexels-photo-7031602.jpeg?auto=compress&cs=tinysrgb&w=1400'
+'https://images.pexels.com/photos/7031594/pexels-photo-7031594.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/31737842/pexels-photo-31737842.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/7031593/pexels-photo-7031593.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/7031595/pexels-photo-7031595.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/5997994/pexels-photo-5997994.jpeg?auto=compress&cs=tinysrgb&w=1200',
+'https://images.pexels.com/photos/7031602/pexels-photo-7031602.jpeg?auto=compress&cs=tinysrgb&w=1200'
 ];
 function stablePropertyNumber(p){const n=Number(p?.id);if(Number.isFinite(n)&&n>0)return n;return Math.abs(String(p?.title||'property').split('').reduce((a,c)=>a+c.charCodeAt(0),0));}
 function propertyImageSetFor(p){const t=String(p?.property_type||'').toLowerCase();if(t.includes('plot')||t.includes('site')||t.includes('land'))return PLOT_IMAGES;if(t.includes('villa'))return VILLA_IMAGES;if(t.includes('apartment')||t.includes('flat'))return APARTMENT_IMAGES;return HOUSE_IMAGES;}
