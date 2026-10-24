@@ -1603,7 +1603,7 @@ html { scroll-behavior: auto; }
 <section class="section analytics" id="analytics"><div class="container"><div class="analytics-head reveal"><div><div class="eyebrow">04 / MARKET INTELLIGENCE</div><h2 class="display">See the market<br>behind the listings.</h2></div><p>Summary statistics and distribution views generated from the available property dataset.</p></div><div class="analytics-stats reveal"><div class="stat"><small>Total properties</small><strong id="analyticsTotal">—</strong></div><div class="stat"><small>Average price</small><strong id="analyticsAvgPrice">—</strong></div><div class="stat"><small>Average ₹ / sqft</small><strong id="analyticsAvgPsf">—</strong></div><div class="stat"><small>Price range</small><strong id="analyticsPriceRange">—</strong></div></div><div class="analytics-grid stagger"><div class="chart-card"><h3>Property types</h3><div id="propertyTypeChart" class="bars"></div></div><div class="chart-card"><h3>BHK distribution</h3><div id="bhkChart" class="bars"></div></div><div class="chart-card"><h3>Properties by district</h3><div id="districtChart" class="bars"></div></div><div class="chart-card"><h3>Price analysis</h3><div class="price-table-wrap"><table class="price-table comparison-table"><thead><tr><th>Property</th><th>Type</th><th>Price</th><th>₹ / sqft</th></tr></thead><tbody id="priceAnalysisTable"></tbody></table></div></div></div></div></section>
 
 <section class="scroll-video-section cinematic-section" id="scrollVideoSection">
-  <video class="scroll-video" id="scrollVideo" muted playsinline preload="metadata">
+  <video class="scroll-video" id="scrollVideo" muted playsinline autoplay loop preload="metadata">
     <source src="{{ url_for('static', filename='video/realestate-scroll.mp4') }}" type="video/mp4">
   </video>
   <div class="scroll-video-overlay"></div>
@@ -2000,29 +2000,32 @@ $('district').addEventListener('change',e=>loadTaluks(e.target.value));$('taluk'
 
 const scrollVideo=document.getElementById('scrollVideo');
 const scrollVideoSection=document.getElementById('scrollVideoSection');
-const videoProgressFill=document.getElementById('videoProgressFill');
-let videoDuration=0;
-let lastVideoTime=0;
+const videoProgressFill=document.querySelector('.video-progress-fill');
+
+// Let the browser play the muted video normally instead of seeking on every
+// scroll event. Repeated currentTime seeks were causing visible decoder stutter.
 if(scrollVideo){
-  scrollVideo.addEventListener('loadedmetadata',()=>{
-    videoDuration=Number.isFinite(scrollVideo.duration)?scrollVideo.duration:0;
-    scrollVideo.currentTime=0;
-  });
-  scrollVideo.addEventListener('error',()=>console.warn('Scroll video could not be loaded. Check static/video/realestate-scroll.mp4'));
+  scrollVideo.pause();
+  const videoObserver=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const playPromise=scrollVideo.play();
+        if(playPromise&&typeof playPromise.catch==='function')playPromise.catch(()=>{});
+      }else{
+        scrollVideo.pause();
+      }
+    });
+  },{threshold:0.08});
+  if(scrollVideoSection)videoObserver.observe(scrollVideoSection);
 }
 
 function syncScrollVideo(){
-  if(!scrollVideo||!scrollVideoSection||!videoDuration) return;
-  const r=scrollVideoSection.getBoundingClientRect();
+  if(!scrollVideo||!scrollVideoSection)return;
+  const rect=scrollVideoSection.getBoundingClientRect();
   const travel=Math.max(scrollVideoSection.offsetHeight-window.innerHeight,1);
-  const local=clamp(-r.top/travel,0,1);
-  const eased=local*local*(3-2*local);
-  const target=eased*videoDuration;
-  if(Math.abs(target-lastVideoTime)>0.08){
-    try{scrollVideo.currentTime=target;lastVideoTime=target}catch(e){}
-  }
-  if(videoProgressFill) videoProgressFill.style.height=(local*100)+'%';
-  scrollVideo.style.transform=`scale(${1.05+local*.05}) translate3d(0,${(0.5-local)*18}px,0)`;
+  const local=clamp(-rect.top/travel,0,1);
+  if(videoProgressFill)videoProgressFill.style.height=(local*100)+'%';
+  scrollVideo.style.transform=`scale(1.04) translate3d(0,${(0.5-local)*10}px,0)`;
 }
 
 let scrollTarget = window.scrollY;
